@@ -147,7 +147,7 @@ eval: pull-eval-image
 		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
 		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
 		--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
-		tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF) \
+		tscholak/$(EVAL_IMAGE_NAME) \
 		/bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 .PHONY: eval_cosql
