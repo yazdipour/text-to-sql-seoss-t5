@@ -73,7 +73,7 @@ build-train-image:
 		--tag tscholak/$(TRAIN_IMAGE_NAME) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--target train \
-		--cache-from type=registry,ref=tscholak/$(TRAIN_IMAGE_NAME):cache \
+		--cache-from type=registry,ref=tscholak/$(TRAIN_IMAGE_NAME)\
 		--cache-to type=inline \
 		--push \
 		git@github.com:ElementAI/picard#$(GIT_HEAD_REF)
@@ -89,14 +89,14 @@ build-eval-image:
 		--builder $(BUILDKIT_BUILDER) \
 		--ssh default=$(SSH_AUTH_SOCK) \
 		-f Dockerfile \
-		--tag tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF) \
-		--tag tscholak/$(EVAL_IMAGE_NAME):cache \
+		--tag tscholak/$(EVAL_IMAGE_NAME) \
+		--tag tscholak/$(EVAL_IMAGE_NAME) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--target eval \
 		--cache-from type=registry,ref=tscholak/$(EVAL_IMAGE_NAME):cache \
 		--cache-to type=inline \
 		--push \
-		git@github.com:ElementAI/picard#$(GIT_HEAD_REF)
+		git@github.com:elena-soare/picard#$(GIT_HEAD_REF)
 
 .PHONY: pull-eval-image
 pull-eval-image:
@@ -178,5 +178,5 @@ serve: pull-eval-image
 		--mount type=bind,source=$(BASE_DIR)/database,target=/database \
 		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
 		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-		tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF) \
+		tscholak/$(EVAL_IMAGE_NAME)\
 		/bin/bash -c "python seq2seq/serve_seq2seq.py configs/serve.json"
