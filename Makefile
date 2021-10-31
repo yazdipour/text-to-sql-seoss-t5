@@ -100,7 +100,7 @@ build-eval-image:
 
 .PHONY: pull-eval-image
 pull-eval-image:
-	docker pull tscholak/$(EVAL_IMAGE_NAME)
+	docker pull tscholak/$(EVAL_IMAGE_NAME):e7dc6eef9d9eb68da58ee32010e423ec37fe1da5
 
 .PHONY: train
 train: pull-train-image
@@ -179,5 +179,5 @@ serve: pull-eval-image
 		--mount type=bind,source=$(BASE_DIR)/database,target=/database \
 		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
 		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-		tscholak/$(EVAL_IMAGE_NAME) \
+		tscholak/$(EVAL_IMAGE_NAME):e7dc6eef9d9eb68da58ee32010e423ec37fe1da5 \
 		/bin/bash -c "python seq2seq/serve_seq2seq.py configs/serve.json"
