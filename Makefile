@@ -100,7 +100,7 @@ build-eval-image:
 
 .PHONY: pull-eval-image
 pull-eval-image:
-	docker pull tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF)
+	docker pull tscholak/$(EVAL_IMAGE_NAME):latest
 
 .PHONY: train
 train: pull-train-image
@@ -147,7 +147,7 @@ eval: pull-eval-image
 		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
 		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
 		--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
-		tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF) \
+		tscholak/$(EVAL_IMAGE_NAME):latest \
 		/bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 .PHONY: eval_cosql
@@ -178,5 +178,5 @@ serve: pull-eval-image
 		--mount type=bind,source=$(BASE_DIR)/database,target=/database \
 		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
 		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-		tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF) \
+		tscholak/$(EVAL_IMAGE_NAME):latest \
 		/bin/bash -c "python seq2seq/serve_seq2seq.py configs/serve.json"
