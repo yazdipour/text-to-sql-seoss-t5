@@ -32,7 +32,7 @@ class BackendArguments:
     """
 
     model_path: str = field(
-        default="tscholak/cxmefzzi",
+        default="transformers_cache/cxmefzzi",
         metadata={"help": "Path to pretrained model"},
     )
     cache_dir: Optional[str] = field(
