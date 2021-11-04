@@ -43,7 +43,7 @@ class BackendArguments:
         default="database",
         metadata={"help": "Where to to find the sqlite files"},
     )
-    host: str = field(default="0.0.0.0", metadata={"help": "Bind socket to this host"})
+    host: str = field(default="35.244.12.250", metadata={"help": "Bind socket to this host"})
     port: int = field(default=8000, metadata={"help": "Bind socket to this port"})
     device: int = field(
         default=1,
