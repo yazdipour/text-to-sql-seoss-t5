@@ -100,7 +100,7 @@ build-eval-image:
 
 .PHONY: pull-eval-image
 pull-eval-image:
-	docker pull tscholak/$(EVAL_IMAGE_NAME):e7dc6eef9d9eb68da58ee32010e423ec37fe1da5
+	
 
 .PHONY: train
 train: pull-train-image
@@ -171,13 +171,11 @@ eval_cosql: pull-eval-image
 serve: pull-eval-image
 	mkdir -p -m 777 database
 	mkdir -p -m 777 transformers_cache
-	docker run \
-		-it \
-		--rm \
-		--user 13011:13011 \
-		-p 8000:8000 \
-		--mount type=bind,source=$(BASE_DIR)/database,target=/database \
-		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
-		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-		tscholak/$(EVAL_IMAGE_NAME):e7dc6eef9d9eb68da58ee32010e423ec37fe1da5 \
-		/bin/bash -c "python seq2seq/serve_seq2seq.py configs/serve.json"
+	pip install rapidfuzz	
+	pip install sentencepiece
+	pip install transformers -q
+	pip install wandb -q
+	pip install nlp
+	pip install datasets
+
+	python seq2seq/serve_seq2seq.py configs/serve.json
