@@ -139,16 +139,7 @@ eval: pull-eval-image
 	mkdir -p -m 777 eval
 	mkdir -p -m 777 transformers_cache
 	mkdir -p -m 777 wandb
-	docker run \
-		-it \
-		--rm \
-		--user 13011:13011 \
-		--mount type=bind,source=$(BASE_DIR)/eval,target=/eval \
-		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
-		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-		--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
-		tscholak/$(EVAL_IMAGE_NAME)\
-		/bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
+	python seq2seq/run_seq2seq.py configs/eval.json
 
 .PHONY: eval_cosql
 eval_cosql: pull-eval-image
@@ -171,11 +162,14 @@ eval_cosql: pull-eval-image
 serve: pull-eval-image
 	mkdir -p -m 777 database
 	mkdir -p -m 777 transformers_cache
+	export PYTHONPATH='/home/eliutza98/picard/'
 	pip install rapidfuzz	
 	pip install sentencepiece
 	pip install transformers -q
 	pip install wandb -q
 	pip install nlp
 	pip install datasets
+	sudo apt install gunicorn
+	pip install nltk
 
 	python seq2seq/serve_seq2seq.py configs/serve.json
