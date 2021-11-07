@@ -15,6 +15,9 @@ class Text2SQLInput(object):
     db_id: str
 
 
+
+
+
 class Text2SQLGenerationPipeline(Text2TextGenerationPipeline):
     """
     Pipeline for text-to-SQL generation using seq2seq models.

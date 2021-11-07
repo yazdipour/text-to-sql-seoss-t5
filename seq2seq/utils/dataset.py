@@ -133,6 +133,7 @@ class DataArguments:
         default_factory=lambda: {
             "spider": "./seq2seq/datasets/spider",
             "cosql": "./seq2seq/datasets/cosql",
+            "datasaur": "./seq2seq/datasets/datasaur",
         },
         metadata={"help": "Paths of the dataset modules."},
     )
@@ -144,6 +145,7 @@ class DataArguments:
         default_factory=lambda: {
             "spider": "./seq2seq/metrics/spider",
             "cosql": "./seq2seq/metrics/cosql",
+            "datasaur": "./seq2seq/metrics/datasaur",
         },
         metadata={"help": "Paths of the metric modules."},
     )

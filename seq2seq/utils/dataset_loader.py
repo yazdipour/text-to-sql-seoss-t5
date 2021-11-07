@@ -77,6 +77,24 @@ def load_dataset(
         tokenizer=tokenizer,
     )
 
+    _datasaur_dataset_dict: Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
+        path=data_args.dataset_paths["datasaur"], cache_dir=model_args.cache_dir
+    )
+    _datasaur_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
+        path=data_args.metric_paths["datasaur"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
+    )
+    _datasaur_add_serialized_schema = lambda ex: spider_add_serialized_schema(
+        ex=ex,
+        data_training_args=data_training_args,
+    )
+    _datasaur_pre_process_function = lambda batch, max_source_length, max_target_length: spider_pre_process_function(
+        batch=batch,
+        max_source_length=max_source_length,
+        max_target_length=max_target_length,
+        data_training_args=data_training_args,
+        tokenizer=tokenizer,
+    )
+
     _prepare_splits_kwargs = {
         "data_args": data_args,
         "training_args": training_args,
@@ -97,6 +115,14 @@ def load_dataset(
             dataset_dict=_cosql_dataset_dict(),
             add_serialized_schema=_cosql_add_serialized_schema,
             pre_process_function=_cosql_pre_process_function,
+            **_prepare_splits_kwargs,
+        )
+    elif data_args.dataset == "datasaur":
+        metric = _datasaur_metric()
+        dataset_splits = prepare_splits(
+            dataset_dict=_datasaur_dataset_dict(),
+            add_serialized_schema=_datasaur_add_serialized_schema,
+            pre_process_function=_datasaur_pre_process_function,
             **_prepare_splits_kwargs,
         )
     elif data_args.dataset == "cosql+spider":

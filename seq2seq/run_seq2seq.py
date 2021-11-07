@@ -194,13 +194,16 @@ def main() -> None:
             "ignore_pad_token_for_loss": data_training_args.ignore_pad_token_for_loss,
             "target_with_db_id": data_training_args.target_with_db_id,
         }
-        if data_args.dataset in ["spider"]:
-            trainer = SpiderTrainer(**trainer_kwargs)
-        elif data_args.dataset in ["cosql", "cosql+spider"]:
-            trainer = CoSQLTrainer(**trainer_kwargs)
-        else:
-            raise NotImplementedError()
 
+        trainer = SpiderTrainer(**trainer_kwargs)
+
+        # if data_args.dataset in ["spider"]:
+        #     trainer = SpiderTrainer(**trainer_kwargs)
+        # elif data_args.dataset in ["cosql", "cosql+spider"]:
+        #     trainer = CoSQLTrainer(**trainer_kwargs)
+        # else:
+        #     raise NotImplementedError()
+ 
         # Training
         if training_args.do_train:
             logger.info("*** Train ***")
