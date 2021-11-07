@@ -139,6 +139,7 @@ eval: pull-eval-image
 	mkdir -p -m 777 eval
 	mkdir -p -m 777 transformers_cache
 	mkdir -p -m 777 wandb
+	export PYTHONPATH='/home/eliutza98/picard/'
 	python seq2seq/run_seq2seq.py configs/eval.json
 
 .PHONY: eval_cosql
