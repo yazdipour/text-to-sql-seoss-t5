@@ -19,7 +19,7 @@ def compute_exact_match_metric(predictions, references) -> Dict[str, Any]:
                     ),
                     "foreign_keys": list(
                         zip(
-                            reference["db_foreign_keys"]["column_id"],
+                                reference["db_foreign_keys"]["column_id"],
                             reference["db_foreign_keys"]["other_column_id"],
                         )
                     ),
