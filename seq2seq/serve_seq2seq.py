@@ -1,3 +1,4 @@
+
 # Set up logging
 import sys
 import logging
@@ -32,7 +33,7 @@ class BackendArguments:
     """
 
     model_path: str = field(
-        default="transformers_cache/cxmefzzi",
+        default="tscholak/cxmefzzi",
         metadata={"help": "Path to pretrained model"},
     )
     cache_dir: Optional[str] = field(
@@ -43,10 +44,10 @@ class BackendArguments:
         default="database",
         metadata={"help": "Where to to find the sqlite files"},
     )
-    host: str = field(default="35.244.12.250", metadata={"help": "Bind socket to this host"})
+    host: str = field(default="0.0.0.0", metadata={"help": "Bind socket to this host"})
     port: int = field(default=8000, metadata={"help": "Bind socket to this port"})
     device: int = field(
-        default=1,
+        default=0,
         metadata={
             "help": "Device ordinal for CPU/GPU supports. Setting this to -1 will leverage CPU. A non-negative value will run the model on the corresponding CUDA device id."
         },
@@ -113,18 +114,33 @@ def main():
             device=backend_args.device,
         )
 
-        db_id="sales"
+        # Initialize REST API
+        app = FastAPI()
 
-        outputs = pipe(inputs=Text2SQLInput(utterance="What is the most popular hour for sales in store 1?", db_id="sales"))
+        class AskResponse(BaseModel):
+            query: str
+            execution_results: list
 
-        query = outputs[0]["generated_text"]
-        print(outputs)
-        print()
-        conn = connect(backend_args.db_path + "/" + db_id + "/" + db_id + ".sqlite")
-        
-        conn.close()
+        @app.get("/ask/{db_id}/{question}")
+        def ask(db_id: str, question: str):
+            try:
+                outputs = pipe(inputs=Text2SQLInput(utterance=question, db_id=db_id))
+                output = outputs[0]
+            except OperationalError as e:
+                raise HTTPException(status_code=404, detail=e.args[0])
+            query = output["generated_text"]
+            try:
+                conn = connect(backend_args.db_path + "/" + db_id + "/" + db_id + ".sqlite")
+                return AskResponse(query=query, execution_results=conn.execute(query).fetchall())
+            except OperationalError as e:
+                raise HTTPException(
+                    status_code=500, detail=f'while executing "{query}", the following error occurred: {e.args[0]}'
+                )
+            finally:
+                conn.close()
 
-
+        # Run app
+        run(app=app, host=backend_args.host, port=backend_args.port)
 
 
 if __name__ == "__main__":
