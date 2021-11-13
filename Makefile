@@ -1,3 +1,4 @@
+
 GIT_HEAD_REF := $(shell git rev-parse HEAD)
 
 BASE_IMAGE := pytorch/pytorch:1.9.0-cuda11.1-cudnn8-devel
@@ -56,7 +57,7 @@ build-dev-image:
 		--cache-from type=registry,ref=tscholak/$(DEV_IMAGE_NAME):cache \
 		--cache-to type=inline \
 		--push \
-		git@github.com:elena-soare/picard#$(GIT_HEAD_REF)
+		git@github.com:ElementAI/picard#$(GIT_HEAD_REF)
 
 .PHONY: pull-dev-image
 pull-dev-image:
@@ -76,7 +77,7 @@ build-train-image:
 		--cache-from type=registry,ref=tscholak/$(TRAIN_IMAGE_NAME):cache \
 		--cache-to type=inline \
 		--push \
-		git@github.com:elena-soare/picard#$(GIT_HEAD_REF)
+		git@github.com:ElementAI/picard#$(GIT_HEAD_REF)
 
 .PHONY: pull-train-image
 pull-train-image:
@@ -96,11 +97,11 @@ build-eval-image:
 		--cache-from type=registry,ref=tscholak/$(EVAL_IMAGE_NAME):cache \
 		--cache-to type=inline \
 		--push \
-		git@github.com:elena-soare/picard#$(GIT_HEAD_REF)
+		git@github.com:ElementAI/picard#$(GIT_HEAD_REF)
 
 .PHONY: pull-eval-image
 pull-eval-image:
-	
+	docker pull tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF)
 
 .PHONY: train
 train: pull-train-image
@@ -139,8 +140,16 @@ eval: pull-eval-image
 	mkdir -p -m 777 eval
 	mkdir -p -m 777 transformers_cache
 	mkdir -p -m 777 wandb
-	export PYTHONPATH='/home/eliutza98/picard/'
-	python seq2seq/run_seq2seq.py configs/eval.json
+	docker run \
+		-it \
+		--rm \
+		--user 13011:13011 \
+		--mount type=bind,source=$(BASE_DIR)/eval,target=/eval \
+		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
+		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
+		--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
+		nvidia/cuda \
+		/bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 .PHONY: eval_cosql
 eval_cosql: pull-eval-image
@@ -155,22 +164,20 @@ eval_cosql: pull-eval-image
 		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
 		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
 		--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
-		tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF) \
+		nvidia/cuda \
 		/bin/bash -c "python seq2seq/run_seq2seq.py configs/eval_cosql.json"
-	
 
 .PHONY: serve
 serve: pull-eval-image
 	mkdir -p -m 777 database
 	mkdir -p -m 777 transformers_cache
-	export PYTHONPATH='/home/eliutza98/picard/'
-	pip install rapidfuzz	
-	pip install sentencepiece
-	pip install transformers -q
-	pip install wandb -q
-	pip install nlp
-	pip install datasets
-	sudo apt install gunicorn
-	pip install nltk
-
-	python seq2seq/serve_seq2seq.py configs/serve.json
+	docker run \
+		-it \
+		--rm \
+		--user 13011:13011 \
+		-p 8000:8000 \
+		--mount type=bind,source=$(BASE_DIR)/database,target=/database \
+		--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache \
+		--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
+		tscholak/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF) \
+		/bin/bash -c "python seq2seq/serve_seq2seq.py configs/serve.json"
