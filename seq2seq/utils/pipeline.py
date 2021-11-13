@@ -111,7 +111,7 @@ class Text2SQLGenerationPipeline(Text2TextGenerationPipeline):
     def _pre_process(self, input: Text2SQLInput) -> str:
         prefix = self.prefix if self.prefix is not None else ""
         if input.db_id not in self.schema_cache:
-            print (self.db_path + "/" + self.db_id)
+            print (self.db_path + "/" + input.db_id)
             self.schema_cache[input.db_id] = get_schema(db_path=self.db_path, db_id=input.db_id)
         schema = self.schema_cache[input.db_id]
         if hasattr(self.model, "add_schema"):
@@ -251,7 +251,7 @@ class ConversationalText2SQLGenerationPipeline(Text2TextGenerationPipeline):
     def _pre_process(self, input: ConversationalText2SQLInput) -> str:
         prefix = self.prefix if self.prefix is not None else ""
         if input.db_id not in self.schema_cache:
-            print (self.db_path + "/" + self.db_id)
+            print (self.db_path + "/" + input.db_id)
             self.schema_cache[input.db_id] = get_schema(db_path=self.db_path, db_id=input.db_id)
         schema = self.schema_cache[input.db_id]
         if hasattr(self.model, "add_schema"):
