@@ -113,33 +113,18 @@ def main():
             device=backend_args.device,
         )
 
-        # Initialize REST API
-        app = FastAPI()
+        db_id="sales"
 
-        class AskResponse(BaseModel):
-            query: str
-            execution_results: list
+        outputs = pipe(inputs=Text2SQLInput(utterance="What is the most popular hour for sales in store 1?", db_id="sales"))
 
-        @app.get("/ask/{db_id}/{question}")
-        def ask(db_id: str, question: str):
-            try:
-                outputs = pipe(inputs=Text2SQLInput(utterance=question, db_id=db_id))
-                output = outputs[0]
-            except OperationalError as e:
-                raise HTTPException(status_code=404, detail=e.args[0])
-            query = output["generated_text"]
-            try:
-                conn = connect(backend_args.db_path + "/" + db_id + "/" + db_id + ".sqlite")
-                return AskResponse(query=query, execution_results=conn.execute(query).fetchall())
-            except OperationalError as e:
-                raise HTTPException(
-                    status_code=500, detail=f'while executing "{query}", the following error occurred: {e.args[0]}'
-                )
-            finally:
-                conn.close()
+        query = outputs[0]["generated_text"]
+        print(outputs)
+        print()
+        conn = connect(backend_args.db_path + "/" + db_id + "/" + db_id + ".sqlite")
+        
+        conn.close()
 
-        # Run app
-        run(app=app, host=backend_args.host, port=backend_args.port)
+
 
 
 if __name__ == "__main__":
