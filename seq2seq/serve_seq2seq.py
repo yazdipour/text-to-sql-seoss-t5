@@ -44,10 +44,10 @@ class BackendArguments:
         default="database",
         metadata={"help": "Where to to find the sqlite files"},
     )
-    host: str = field(default="0.0.0.0", metadata={"help": "Bind socket to this host"})
+    host: str = field(default="10.140.0.8", metadata={"help": "Bind socket to this host"})
     port: int = field(default=8000, metadata={"help": "Bind socket to this port"})
     device: int = field(
-        default=0,
+        default=1,
         metadata={
             "help": "Device ordinal for CPU/GPU supports. Setting this to -1 will leverage CPU. A non-negative value will run the model on the corresponding CUDA device id."
         },
@@ -113,6 +113,11 @@ def main():
             schema_serialization_with_db_content=data_training_args.schema_serialization_with_db_content,
             device=backend_args.device,
         )
+
+
+
+        outputs = pipe(inputs=Text2SQLInput(utterance="What were my sales yesterday", db_id="sales"))
+        print(outputs)
 
         # Initialize REST API
         app = FastAPI()
