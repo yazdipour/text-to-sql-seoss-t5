@@ -47,7 +47,7 @@ class BackendArguments:
     host: str = field(default="10.140.0.8", metadata={"help": "Bind socket to this host"})
     port: int = field(default=8000, metadata={"help": "Bind socket to this port"})
     device: int = field(
-        default=1,
+        default=0,
         metadata={
             "help": "Device ordinal for CPU/GPU supports. Setting this to -1 will leverage CPU. A non-negative value will run the model on the corresponding CUDA device id."
         },
