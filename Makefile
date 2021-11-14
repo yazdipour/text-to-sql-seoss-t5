@@ -84,15 +84,16 @@ pull-train-image:
 
 .PHONY: build-eval-image
 build-eval-image:
+	ssh-add
 	docker buildx build \
 		--builder $(BUILDKIT_BUILDER) \
 		--ssh default=$(SSH_AUTH_SOCK) \
 		-f Dockerfile \
-		--tag datasaur/$(EVAL_IMAGE_NAME):$(GIT_HEAD_REF) \
-		--tag datasaur/$(EVAL_IMAGE_NAME):cache \
+		--tag 1301122/datasaur:$(GIT_HEAD_REF) \
+		--tag 1301122/datasaur:cache \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--target eval \
-		--cache-from type=registry,ref=datasaur/$(EVAL_IMAGE_NAME):cache \
+		--cache-from type=registry,ref=1301122/datasaur:cache \
 		--cache-to type=inline \
 		--push \
 		git@github.com:elena-soare/picard#$(GIT_HEAD_REF)
