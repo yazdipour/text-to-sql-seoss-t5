@@ -1,19 +1,19 @@
-# # Set up logging
-# import sys
-# import logging
+# Set up logging
+import sys
+import logging
 
-# logging.basicConfig(
-#     format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
-#     datefmt="%m/%d/%Y %H:%M:%S",
-#     handlers=[logging.StreamHandler(sys.stdout)],
-#     level=logging.WARNING,
-# )
-# logger = logging.getLogger(__name__)
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
+    datefmt="%m/%d/%Y %H:%M:%S",
+    handlers=[logging.StreamHandler(sys.stdout)],
+    level=logging.WARNING,
+)
+logger = logging.getLogger(__name__)
 
-# import os
-# import json
-# from pathlib import Path
-# from contextlib import nullcontext
+import os
+import json
+from pathlib import Path
+from contextlib import nullcontext
 # from dataclasses import asdict, fields
 # from transformers.hf_argparser import HfArgumentParser
 # from transformers.training_args_seq2seq import Seq2SeqTrainingArguments
@@ -46,7 +46,7 @@ def main():
                 data["picard_mode"] = type
             with open("configs/eval.json", "w") as jsonFile:
                 json.dump(data, jsonFile)
-            run()
+            os.system("seq2seq/run_seq2seq.py configs/eval.json")
             
 
 if __name__ == "__main__":
