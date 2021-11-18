@@ -32,7 +32,7 @@ from seq2seq.utils.spider import SpiderTrainer
 from seq2seq.utils.cosql import CoSQLTrainer
 
 
-def main() -> None:
+def run() -> None:
     # See all possible arguments by passing the --help flag to this script.
     parser = HfArgumentParser(
         (PicardArguments, ModelArguments, DataArguments, DataTrainingArguments, Seq2SeqTrainingArguments)
@@ -267,7 +267,8 @@ def main() -> None:
 
                 trainer.log_metrics(section, metrics)
                 trainer.save_metrics(section, metrics)
+                print(metrics)
 
 
 if __name__ == "__main__":
-    main()
+    run()
