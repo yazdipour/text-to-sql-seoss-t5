@@ -320,12 +320,13 @@ def main():
             eval_args ["run_name"] = "picard-with" + "_beam_" + str(beam) + "_mode_"+ str(mode)
             eval_args ["num_beams"] = beam
             eval_args ["picard_mode"] = mode
-            metrics = run() 
+            metrics = run()
             print(metrics)
             torch.cuda.empty_cache()
-            filename = "picard-with" + "_beam_" + str(beam) + "_mode_"+ str(mode)
-            with open(f"{self.args.output_dir}/filename.json", "w") as jsonFile:
+            filename = "eval/picard-with" + "_beam_" + str(beam) + "_mode_"+ str(mode)+".json"
+            with open(filename, "w") as jsonFile:
                 json.dump(metrics, jsonFile)
 
+                
 if __name__ == "__main__":
     main()
