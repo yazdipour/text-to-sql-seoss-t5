@@ -41,7 +41,7 @@ def compute_test_suite_metric(predictions, references, db_dir: Optional[str] = N
     )
     # Only used for Sparc/CoSQL
     turn_scores = {"exec": [], "exact": []}
-    f = open("eval/results_sql.csv", 'a')
+    f = open("/eval/results_sql.csv", 'a')
     writer = csv.writer(f)
     for prediction, reference in zip(predictions, references):
         turn_idx = reference.get("turn_idx", 0)
