@@ -36,10 +36,10 @@ train:
 		mkdir -p -m 777 wandb
 		docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
     		-it --rm --user root -p 8000:8000 \
-			--mount type=bind,source=/home/eliutza98/picard/eval,target=/eval \
-			--mount type=bind,source=/home/eliutza98/picard/wandb,target=/app/wandb \
-			--mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  \
-			--mount type=bind,source=/home/eliutza98/picard/configs,target=/app/configs \
+			--mount type=bind,source=/home/datasaur22/picard/eval,target=/eval \
+			--mount type=bind,source=/home/datasaur22/picard/wandb,target=/app/wandb \
+			--mount type=bind,source=/home/datasaur22/picard/transformers_cache,target=/transformers_cache  \
+			--mount type=bind,source=/home/datasaur22/picard/configs,target=/app/configs \
 			1301122/datasaur:$(GIT_HEAD_REF) /bin/bash -c "python seq2seq/run_seq2seq.py configs/train.json"
 
 
@@ -51,10 +51,10 @@ eval:
 		mkdir -p -m 777 wandb
 		docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
 			-it --rm --user root -p 8000:8000 \
-			--mount type=bind,source=/home/eliutza98/picard/eval,target=/eval \
-			--mount type=bind,source=/home/eliutza98/picard/wandb,target=/app/wandb \
-			--mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  \
-			--mount type=bind,source=/home/eliutza98/picard/configs,target=/app/configs \
+			--mount type=bind,source=/home/datasaur22/picard/eval,target=/eval \
+			--mount type=bind,source=/home/datasaur22/picard/wandb,target=/app/wandb \
+			--mount type=bind,source=/home/datasaur22/picard/transformers_cache,target=/transformers_cache  \
+			--mount type=bind,source=/home/datasaur22/picard/configs,target=/app/configs \
 			1301122/datasaur:$(GIT_HEAD_REF) /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 
@@ -66,8 +66,8 @@ serve:
 		mkdir -p -m 777 wandb
 		docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
 			-it --rm --user root -p 8000:8000 \
-			--mount type=bind,source=/home/eliutza98/picard/database,target=/database \
-			--mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  \
-			--mount type=bind,source=/home/eliutza98/picard/configs,target=/app/configs \
+			--mount type=bind,source=/home/datasaur22/picard/database,target=/database \
+			--mount type=bind,source=/home/datasaur22/picard/transformers_cache,target=/transformers_cache  \
+			--mount type=bind,source=/home/datasaur22/picard/configs,target=/app/configs \
 			1301122/datasaur:$(GIT_HEAD_REF) /bin/bash -c "python seq2seq/serve_seq2seq.py configs/serve.json"
 
