@@ -44,7 +44,7 @@ class BackendArguments:
         default="database",
         metadata={"help": "Where to to find the sqlite files"},
     )
-    host: str = field(default="10.140.0.8", metadata={"help": "Bind socket to this host"})
+    host: str = field(default="0.0.0.0", metadata={"help": "Bind socket to this host"})
     port: int = field(default=8000, metadata={"help": "Bind socket to this port"})
     device: int = field(
         default=0,
@@ -116,7 +116,9 @@ def main():
 
 
 
-        outputs = pipe(inputs=Text2SQLInput(utterance="What were my sales yesterday", db_id="sales"))
+        # outputs = pipe(inputs=Text2SQLInput(utterance="What were my sales yesterday", db_id="sales"))
+        outputs = pipe(inputs=Text2SQLInput(utterance="timetamp which had the maximum revenue after date of '2021-07-12 21:00:00.000'", db_id="sales"))
+
         print(outputs)
 
         # Initialize REST API
@@ -150,3 +152,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# gcloud compute --project=datasaur firewall-rules create default-allow-http --direction=INGRESS --priority=1000 --network=default --action=ALLOW  rules=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=http-server
+
+# gcloud compute instances add-tags deeplearning-6-twin-vm --tags datasaur
