@@ -30,7 +30,7 @@ build-picard:
 
 .PHONY: build-eval-image
 build-eval-image:
-	docker build . --tag $(IMAGE_NAME):$(GIT_HEAD_REF) --build-arg BASE_IMAGE=pytorch/pytorch:1.9.0-cuda11.1-cudnn8-devel \ 
+	docker build . --tag $(IMAGE_NAME):$(GIT_HEAD_REF) --build-arg BASE_IMAGE=pytorch/pytorch:1.9.0-cuda11.1-cudnn8-devel
 
 
 
@@ -52,8 +52,7 @@ build-eval-image:
 
 
 .PHONY: eval
-eval:
-        mkdir -p -m 777 eval
+eval:   mkdir -p -m 777 eval
         mkdir -p -m 777 transformers_cache
         mkdir -p -m 777 wandb
         docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
@@ -68,8 +67,7 @@ eval:
 
 
 .PHONY: serve
-serve:
-        mkdir -p -m 777 eval
+serve:	mkdir -p -m 777 eval
         mkdir -p -m 777 transformers_cache
         mkdir -p -m 777 wandb
         docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
