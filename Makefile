@@ -52,35 +52,30 @@ build-eval-image:
 
 
 .PHONY: eval
-eval: 
-	mkdir -p -m 777 eval
-	mkdir -p -m 777 transformers_cache
-	mkdir -p -m 777 wandb
-	docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
-		-it --rm --user 1000:1001 -p 8000:8000 \
-		--mount type=bind,source=/home/eliutza98/picard/eval,target=/eval \
-		--mount type=bind,source=/home/eliutza98/picard/wandb,target=/wandb \
-		--mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  \
-		--mount type=bind,source=/home/eliutza98/picard/configs,target=/app/configs \
-		1301122/datasaur:$(GIT_HEAD_REF) \ 
-		/bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
+eval:
+        mkdir -p -m 777 eval
+        mkdir -p -m 777 transformers_cache
+        mkdir -p -m 777 wandb
+        docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
+                -it --rm --user 1000:1001 -p 8000:8000 \
+                --mount type=bind,source=/home/eliutza98/picard/eval,target=/eval \
+                --mount type=bind,source=/home/eliutza98/picard/wandb,target=/wandb \
+                --mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  \
+                --mount type=bind,source=/home/eliutza98/picard/configs,target=/app/configs \
+                1301122/datasaur:$(GIT_HEAD_REF) /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 
 
 
 .PHONY: serve
-serve: 	
-	mkdir -p -m 777 eval
-	mkdir -p -m 777 transformers_cache
-	mkdir -p -m 777 wandb
-	docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
-		-it --rm --user root -p 8000:8000 \
-		--mount type=bind,source=/home/eliutza98/picard/database,target=/database \
-		--mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  \
-		--mount type=bind,source=/home/eliutza98/picard/configs,target=/configs \
-		1301122/datasaur:$(GIT_HEAD_REF) \ 
-		/bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
+serve:
+        mkdir -p -m 777 eval
+        mkdir -p -m 777 transformers_cache
+        mkdir -p -m 777 wandb
+        docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
+                -it --rm --user root -p 8000:8000 \
+                --mount type=bind,source=/home/eliutza98/picard/database,target=/database \
+                --mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  \
+                --mount type=bind,source=/home/eliutza98/picard/configs,target=/app/configs \
+                1301122/datasaur:$(GIT_HEAD_REF) /bin/bash -c "python seq2seq/serve_seq2seq.py configs/serve.json"
 
-		docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all -it --rm --user root -p 8000:8000 --mount type=bind,source=/home/eliutza98/picard/database,target=/database  --mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  --mount type=bind,source=/home/eliutza98/picard/configs,target=/configs --mount type=bind,source=/home/eliutza98/picard/eval,target=/eval  1301122/datasaur:752c7c70d95819a9db0f149faeae737a081169dd  /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
-
-		nvidia-docker run --runtime=nvidia -it --rm --user root -p 8002:8002 --mount type=bind,source=/home/eliutza98/picard/database,target=/database  --mount type=bind,source=/home/eliutza98/picard/transformers_cache,target=/transformers_cache  --mount type=bind,source=/home/eliutza98/picard/configs,target=/configs --mount type=bind,source=/home/eliutza98/picard/eval,target=/eval  1301122/datasaur:752c7c70d95819a9db0f149faeae737a081169dd  /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"

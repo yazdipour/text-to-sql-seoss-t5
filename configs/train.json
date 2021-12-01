@@ -1,7 +1,7 @@
 {
     "run_name": "t5-spider",
-    "model_name_or_path": "t5-3b",
-    "dataset": "spider",
+    "model_name_or_path": "tscholak/cxmefzzi",
+    "dataset": "datasaur",
     "source_prefix": "",
     "schema_serialization_type": "peteshaw",
     "schema_serialization_randomized": false,
@@ -19,7 +19,7 @@
     "per_device_eval_batch_size": 5,
     "gradient_accumulation_steps": 410,
     "label_smoothing_factor": 0.0,
-    "learning_rate": 1e-4,
+    "learning_rate": 1e-6,
     "adafactor": true,
     "adam_eps": 1e-6,
     "lr_scheduler_type": "constant",
