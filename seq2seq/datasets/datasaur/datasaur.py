@@ -19,7 +19,7 @@ _HOMEPAGE = ""
 
 _LICENSE = ""
 
-_URL = "https://drive.google.com/uc?export=download&id=1f8LFLORNNmp-VTHVLpfcKLmvriBMnOXJ"
+_URL = "https://drive.google.com/uc?export=download&id=1SQsQcow1ai0R1CxWOGyf5mcTGQ8GcnGM"
 
 
 class Datasaur(datasets.GeneratorBasedBuilder):
@@ -80,7 +80,7 @@ class Datasaur(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "data_filepaths": [
-                        downloaded_filepath +"/datasaur/dev.json",
+                        downloaded_filepath +"/datasaur/train_datasaur.json",
                     ],
                     
                     "db_path": downloaded_filepath +  "/datasaur/database",
