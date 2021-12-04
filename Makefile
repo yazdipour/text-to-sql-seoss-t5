@@ -31,12 +31,12 @@ build-eval-image:
 
 .PHONY: train
 train:
-		mkdir -p -m 777 eval
+		mkdir -p -m 777 train
 		mkdir -p -m 777 transformers_cache
 		mkdir -p -m 777 wandb
 		docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
     		-it --rm --user root -p 8000:8000 \
-			--mount type=bind,source=/home/datasaur22/picard/eval,target=/eval \
+			--mount type=bind,source=/home/datasaur22/picard/train,target=/train \
 			--mount type=bind,source=/home/datasaur22/picard/wandb,target=/app/wandb \
 			--mount type=bind,source=/home/datasaur22/picard/transformers_cache,target=/transformers_cache  \
 			--mount type=bind,source=/home/datasaur22/picard/configs,target=/app/configs \
