@@ -113,7 +113,7 @@ class DataTrainingArguments:
         default=True,
         metadata={"help": "Whether or not to use the database content to resolve field matches."},
     )
-    schema_serialization_foreign_keys: str = field(
+    schema_serialization_with_foreign_keys: str = field(
         default=False,
         metadata={"help": "Whether or not to include foreign keys in the schema"},
     )
