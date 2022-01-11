@@ -7,6 +7,7 @@
     "schema_serialization_randomized": false,
     "schema_serialization_with_db_id": true,
     "schema_serialization_with_db_content": true,
+    "schema_serialization_foreign_keys": true,
     "normalize_query": true,
     "target_with_db_id": true,
     "output_dir": "/train",

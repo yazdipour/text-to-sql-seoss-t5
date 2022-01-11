@@ -126,6 +126,7 @@ class Text2SQLGenerationPipeline(Text2TextGenerationPipeline):
             schema_serialization_randomized=self.schema_serialization_randomized,
             schema_serialization_with_db_id=self.schema_serialization_with_db_id,
             schema_serialization_with_db_content=self.schema_serialization_with_db_content,
+            schema_serialization_with_foreign_keys=self.schema_serialization_with_foreign_keys,
             normalize_query=self.normalize_query,
         )
         return spider_get_input(question=input.utterance, serialized_schema=serialized_schema, prefix=prefix)
@@ -266,6 +267,7 @@ class ConversationalText2SQLGenerationPipeline(Text2TextGenerationPipeline):
             schema_serialization_randomized=self.schema_serialization_randomized,
             schema_serialization_with_db_id=self.schema_serialization_with_db_id,
             schema_serialization_with_db_content=self.schema_serialization_with_db_content,
+            schema_serialization_with_foreign_keys=self.schema_serialization_with_foreign_keys,
             normalize_query=self.normalize_query,
         )
         return cosql_get_input(utterances=input.utterances, serialized_schema=serialized_schema, prefix=prefix)

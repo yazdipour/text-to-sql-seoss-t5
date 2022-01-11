@@ -101,10 +101,6 @@ class DataTrainingArguments:
         default="peteshaw",
         metadata={"help": "Choose between ``verbose`` and ``peteshaw`` schema serialization."},
     )
-    schema_serialization_foreign_keys: str = field(
-        default=True,
-        metadata={"help": "Whether or not to include foreign keys in the schema"},
-    )
     schema_serialization_randomized: bool = field(
         default=False,
         metadata={"help": "Whether or not to randomize the order of tables."},
@@ -116,6 +112,10 @@ class DataTrainingArguments:
     schema_serialization_with_db_content: bool = field(
         default=True,
         metadata={"help": "Whether or not to use the database content to resolve field matches."},
+    )
+    schema_serialization_foreign_keys: str = field(
+        default=False,
+        metadata={"help": "Whether or not to include foreign keys in the schema"},
     )
     normalize_query: bool = field(default=True, metadata={"help": "Whether to normalize the SQL queries."})
     target_with_db_id: bool = field(
@@ -342,19 +342,23 @@ def serialize_schema(
     db_foreign_keys:Dict[str, List[str]],
     db_primary_keys:Dict[str, List[str]],
     schema_serialization_type: str = "peteshaw",
-    schema_serialization_foreign_keys: bool = True,
     schema_serialization_randomized: bool = False,
     schema_serialization_with_db_id: bool = True,
     schema_serialization_with_db_content: bool = False,
+    schema_serialization_with_foreign_keys: bool = False,
     normalize_query: bool = True,
 ) -> str:
+    print(db_primary_keys)
     pair1 = db_foreign_keys['column_id']
     pair2 = db_foreign_keys['other_column_id']
     foreign = {}
+# {'table_id': [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3], 'column_name': ['*', 'Stadium_ID', 'Location', 'Name', 'Capacity', 'Highest', 'Lowest', 'Average', 'Singer_ID', 'Name', 'Country', 'Song_Name', 'Song_release_year', 'Age', 'Is_male', 'concert_ID', 'concert_Name', 'Theme', 'Stadium_ID', 'Year', 'concert_ID', 'Singer_ID']}
 
   
     for i,j in zip(pair1, pair2):
       foreign[db_column_names['column_name'][int(i)]] = db_column_names['column_name'][int(j)]
+    print("la la" + str(foreign))
+    print("this data: " + str(question) + str (db_path) + str(db_id) + str(db_column_names) + str(db_table_names))
 
     if schema_serialization_type == "verbose":
         db_id_str = "Database: {db_id}. "
@@ -397,23 +401,23 @@ def serialize_schema(
         no_or_both_primary_key = ( i in pair1 and pair2[pair1.index(i)] not in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] not in db_primary_keys['column_id']) and i not in db_primary_keys['column_id'] or ( i in pair1 and pair2[pair1.index(i)] in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] in db_primary_keys['column_id']) and i in db_primary_keys['column_id']
 
         column_ref_id = -1
-        if i in pair1 and (pair2[pair1.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key) and schema_serialization_foreign_keys:
+        if i in pair1 and (pair2[pair1.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
           column_ref_id = pair2[pair1.index(i)]
-        elif i in pair2 and (pair1[pair2.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key) and schema_serialization_foreign_keys:
+        elif i in pair2 and (pair1[pair2.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
           column_ref_id = pair1[pair2.index(i)]
         
         if column_ref_id != -1:
             
-            primary_key_column = db_column_names['column_name'][column_ref_id]
-            primary_key_column = primary_key_column.lower() if normalize_query else primary_key_column
+            # primary_key_column = db_column_names['column_name'][column_ref_id]
+            # primary_key_column = primary_key_column.lower() if normalize_query else primary_key_column
 
             primary_key_table = db_table_names[int(db_column_names['table_id'][column_ref_id])]
             primary_key_table = primary_key_table.lower() if normalize_query else primary_key_table
 
-            column_str = column_str +  ' - ' + primary_key_table + '.' + primary_key_column +' - '
+            column_str = column_str +  ' foreign key ' + primary_key_table + ' '# + '.' + primary_key_column +''
 
 
-
+        
         return column_str
     tables = [
         table_str.format(
@@ -439,6 +443,7 @@ def serialize_schema(
         serialized_schema = db_id_str.format(db_id=db_id) + table_sep.join(tables)
     else:
         serialized_schema = table_sep.join(tables)
-    print('serialize: ' + serialized_schema)
+    print('serilizes: ' + serialized_schema)
     return serialized_schema
+
 
