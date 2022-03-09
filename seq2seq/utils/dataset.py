@@ -348,17 +348,6 @@ def serialize_schema(
     schema_serialization_with_foreign_keys: bool = False,
     normalize_query: bool = True,
 ) -> str:
-    print(db_primary_keys)
-    pair1 = db_foreign_keys['column_id']
-    pair2 = db_foreign_keys['other_column_id']
-    foreign = {}
-# {'table_id': [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3], 'column_name': ['*', 'Stadium_ID', 'Location', 'Name', 'Capacity', 'Highest', 'Lowest', 'Average', 'Singer_ID', 'Name', 'Country', 'Song_Name', 'Song_release_year', 'Age', 'Is_male', 'concert_ID', 'concert_Name', 'Theme', 'Stadium_ID', 'Year', 'concert_ID', 'Singer_ID']}
-
-  
-    for i,j in zip(pair1, pair2):
-      foreign[db_column_names['column_name'][int(i)]] = db_column_names['column_name'][int(j)]
-    print("la la" + str(foreign))
-    print("this data: " + str(question) + str (db_path) + str(db_id) + str(db_column_names) + str(db_table_names))
 
     if schema_serialization_type == "verbose":
         db_id_str = "Database: {db_id}. "
@@ -376,14 +365,12 @@ def serialize_schema(
         column_sep = " , "
         column_str_with_values = "{column} ( {values} )"
         column_str_without_values = "{column}"
-        column_sep_key=" - "
         value_sep = " , "
     else:
         raise NotImplementedError
 
-    def get_column_str(i: int, table_name: str, column_name: str) -> str:
+    def get_column_str(table_name: str, column_name: str) -> str:
         column_name_str = column_name.lower() if normalize_query else column_name
-        column_str = ''
         if schema_serialization_with_db_content:
             matches = get_database_matches(
                 question=question,
@@ -392,45 +379,24 @@ def serialize_schema(
                 db_path=(db_path + "/" + db_id + "/" + db_id + ".sqlite"),
             )
             if matches:
-                column_str =  column_str_with_values.format(column=column_name_str, values=value_sep.join(matches))
+                return column_str_with_values.format(column=column_name_str, values=value_sep.join(matches))
             else:
-                column_str = column_str_without_values.format(column=column_name_str)
+                return column_str_without_values.format(column=column_name_str)
         else:
-            column_str =  column_str_without_values.format(column=column_name_str)
+            return column_str_without_values.format(column=column_name_str)
 
-        no_or_both_primary_key = ( i in pair1 and pair2[pair1.index(i)] not in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] not in db_primary_keys['column_id']) and i not in db_primary_keys['column_id'] or ( i in pair1 and pair2[pair1.index(i)] in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] in db_primary_keys['column_id']) and i in db_primary_keys['column_id']
-
-        column_ref_id = -1
-        if i in pair1 and (pair2[pair1.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
-          column_ref_id = pair2[pair1.index(i)]
-        elif i in pair2 and (pair1[pair2.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
-          column_ref_id = pair1[pair2.index(i)]
-        
-        if column_ref_id != -1:
-            
-            # primary_key_column = db_column_names['column_name'][column_ref_id]
-            # primary_key_column = primary_key_column.lower() if normalize_query else primary_key_column
-
-            primary_key_table = db_table_names[int(db_column_names['table_id'][column_ref_id])]
-            primary_key_table = primary_key_table.lower() if normalize_query else primary_key_table
-
-            column_str = column_str +  ' foreign key ' + primary_key_table + ' '# + '.' + primary_key_column +''
-
-
-        
-        return column_str
     tables = [
         table_str.format(
             table=table_name.lower() if normalize_query else table_name,
             columns=column_sep.join(
                 map(
-                    lambda y: get_column_str(i=y[0], table_name=table_name, column_name=y[1][1]),
+                    lambda y: get_column_str(table_name=table_name, column_name=y[1]),
                     filter(
-                        lambda y: y[1][0] == table_id,
-                        enumerate(zip(
+                        lambda y: y[0] == table_id,
+                        zip(
                             db_column_names["table_id"],
                             db_column_names["column_name"],
-                        )),
+                        ),
                     ),
                 )
             ),
@@ -443,7 +409,121 @@ def serialize_schema(
         serialized_schema = db_id_str.format(db_id=db_id) + table_sep.join(tables)
     else:
         serialized_schema = table_sep.join(tables)
-    print('serilizes: ' + serialized_schema)
+    print(serialized_schema)
     return serialized_schema
 
 
+
+
+# def serialize_schema(
+#     question: str,
+#     db_path: str,
+#     db_id: str,
+#     db_column_names: Dict[str, str],
+#     db_table_names: List[str],
+#     db_foreign_keys:Dict[str, List[str]],
+#     db_primary_keys:Dict[str, List[str]],
+#     schema_serialization_type: str = "peteshaw",
+#     schema_serialization_randomized: bool = False,
+#     schema_serialization_with_db_id: bool = True,
+#     schema_serialization_with_db_content: bool = False,
+#     schema_serialization_with_foreign_keys: bool = False,
+#     normalize_query: bool = True,
+# ) -> str:
+#     print(db_primary_keys)
+#     pair1 = db_foreign_keys['column_id']
+#     pair2 = db_foreign_keys['other_column_id']
+#     foreign = {}
+# # {'table_id': [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3], 'column_name': ['*', 'Stadium_ID', 'Location', 'Name', 'Capacity', 'Highest', 'Lowest', 'Average', 'Singer_ID', 'Name', 'Country', 'Song_Name', 'Song_release_year', 'Age', 'Is_male', 'concert_ID', 'concert_Name', 'Theme', 'Stadium_ID', 'Year', 'concert_ID', 'Singer_ID']}
+
+  
+#     for i,j in zip(pair1, pair2):
+#       foreign[db_column_names['column_name'][int(i)]] = db_column_names['column_name'][int(j)]
+#     print("la la" + str(foreign))
+#     print("this data: " + str(question) + str (db_path) + str(db_id) + str(db_column_names) + str(db_table_names))
+
+#     if schema_serialization_type == "verbose":
+#         db_id_str = "Database: {db_id}. "
+#         table_sep = ". "
+#         table_str = "Table: {table}. Columns: {columns}"
+#         column_sep = ", "
+#         column_str_with_values = "{column} ({values})"
+#         column_str_without_values = "{column}"
+#         value_sep = ", "
+#     elif schema_serialization_type == "peteshaw":
+#         # see https://github.com/google-research/language/blob/master/language/nqg/tasks/spider/append_schema.py#L42
+#         db_id_str = " | {db_id}"
+#         table_sep = ""
+#         table_str = " | {table} : {columns}"
+#         column_sep = " , "
+#         column_str_with_values = "{column} ( {values} )"
+#         column_str_without_values = "{column}"
+#         column_sep_key=" - "
+#         value_sep = " , "
+#     else:
+#         raise NotImplementedError
+
+#     def get_column_str(i: int, table_name: str, column_name: str) -> str:
+#         column_name_str = column_name.lower() if normalize_query else column_name
+#         column_str = ''
+#         if schema_serialization_with_db_content:
+#             matches = get_database_matches(
+#                 question=question,
+#                 table_name=table_name,
+#                 column_name=column_name,
+#                 db_path=(db_path + "/" + db_id + "/" + db_id + ".sqlite"),
+#             )
+#             if matches:
+#                 column_str =  column_str_with_values.format(column=column_name_str, values=value_sep.join(matches))
+#             else:
+#                 column_str = column_str_without_values.format(column=column_name_str)
+#         else:
+#             column_str =  column_str_without_values.format(column=column_name_str)
+
+#         no_or_both_primary_key = ( i in pair1 and pair2[pair1.index(i)] not in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] not in db_primary_keys['column_id']) and i not in db_primary_keys['column_id'] or ( i in pair1 and pair2[pair1.index(i)] in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] in db_primary_keys['column_id']) and i in db_primary_keys['column_id']
+
+#         column_ref_id = -1
+#         if i in pair1 and (pair2[pair1.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
+#           column_ref_id = pair2[pair1.index(i)]
+#         elif i in pair2 and (pair1[pair2.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
+#           column_ref_id = pair1[pair2.index(i)]
+        
+#         if column_ref_id != -1:
+            
+#             # primary_key_column = db_column_names['column_name'][column_ref_id]
+#             # primary_key_column = primary_key_column.lower() if normalize_query else primary_key_column
+
+#             primary_key_table = db_table_names[int(db_column_names['table_id'][column_ref_id])]
+#             primary_key_table = primary_key_table.lower() if normalize_query else primary_key_table
+
+#             column_str = column_str +  ' foreign key ' + primary_key_table + ' '# + '.' + primary_key_column +''
+
+
+        
+#         return column_str
+#     tables = [
+#         table_str.format(
+#             table=table_name.lower() if normalize_query else table_name,
+#             columns=column_sep.join(
+#                 map(
+#                     lambda y: get_column_str(i=y[0], table_name=table_name, column_name=y[1][1]),
+#                     filter(
+#                         lambda y: y[1][0] == table_id,
+#                         enumerate(zip(
+#                             db_column_names["table_id"],
+#                             db_column_names["column_name"],
+#                         )),
+#                     ),
+#                 )
+#             ),
+#         )
+#         for table_id, table_name in enumerate(db_table_names)
+#     ]
+#     if schema_serialization_randomized:
+#         random.shuffle(tables)
+#     if schema_serialization_with_db_id:
+#         serialized_schema = db_id_str.format(db_id=db_id) + table_sep.join(tables)
+#     else:
+#         serialized_schema = table_sep.join(tables)
+#     print('serilizes: ' + serialized_schema)
+#     return serialized_schema
