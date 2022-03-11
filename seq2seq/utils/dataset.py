@@ -117,6 +117,11 @@ class DataTrainingArguments:
         default=False,
         metadata={"help": "Whether or not to include foreign keys in the schema"},
     )
+
+    schema_serialization_with_db_description: str = field(
+        default=False,
+        metadata={"help": "Whether or not to include foreign keys in the schema"},
+    )
     normalize_query: bool = field(default=True, metadata={"help": "Whether to normalize the SQL queries."})
     target_with_db_id: bool = field(
         default=True,
@@ -341,11 +346,13 @@ def serialize_schema(
     db_table_names: List[str],
     db_foreign_keys:Dict[str, List[str]],
     db_primary_keys:Dict[str, List[str]],
+    description: str,
     schema_serialization_type: str = "peteshaw",
     schema_serialization_randomized: bool = False,
     schema_serialization_with_db_id: bool = True,
     schema_serialization_with_db_content: bool = False,
     schema_serialization_with_foreign_keys: bool = False,
+    schema_serialization_with_db_description:bool = True,
     normalize_query: bool = True,
 ) -> str:
     print(db_primary_keys)
@@ -354,12 +361,8 @@ def serialize_schema(
     foreign = {}
 # {'table_id': [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3], 'column_name': ['*', 'Stadium_ID', 'Location', 'Name', 'Capacity', 'Highest', 'Lowest', 'Average', 'Singer_ID', 'Name', 'Country', 'Song_Name', 'Song_release_year', 'Age', 'Is_male', 'concert_ID', 'concert_Name', 'Theme', 'Stadium_ID', 'Year', 'concert_ID', 'Singer_ID']}
 
-  
-    for i,j in zip(pair1, pair2):
-      foreign[db_column_names['column_name'][int(i)]] = db_column_names['column_name'][int(j)]
-    print("la la" + str(foreign))
-    print("this data: " + str(question) + str (db_path) + str(db_id) + str(db_column_names) + str(db_table_names))
 
+    desc_sep = " <sep> "
     if schema_serialization_type == "verbose":
         db_id_str = "Database: {db_id}. "
         table_sep = ". "
@@ -443,6 +446,8 @@ def serialize_schema(
         serialized_schema = db_id_str.format(db_id=db_id) + table_sep.join(tables)
     else:
         serialized_schema = table_sep.join(tables)
+    if schema_serialization_with_db_description:
+      serialized_schema += desc_sep + description
     print('serilizes: ' + serialized_schema)
     return serialized_schema
 

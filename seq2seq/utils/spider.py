@@ -40,9 +40,11 @@ def spider_add_serialized_schema(ex: dict, data_training_args: DataTrainingArgum
         schema_serialization_with_db_id=data_training_args.schema_serialization_with_db_id,
         schema_serialization_with_db_content=data_training_args.schema_serialization_with_db_content,
         schema_serialization_with_foreign_keys=data_training_args.schema_serialization_with_foreign_keys,
+        schema_serialization_with_db_description=data_training_args.schema_serialization_with_db_description,
         normalize_query=data_training_args.normalize_query,
     )
     return {"serialized_schema": serialized_schema}
+
 
 
 def spider_pre_process_function(
