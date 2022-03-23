@@ -377,8 +377,7 @@ def serialize_schema(
         value_sep = " , "
     else:
         raise NotImplementedError
-
-       def get_column_str(table_name: str, column_name: str) -> str:
+    def get_column_str(table_name: str, column_name: str) -> str:
         column_name_str = column_name.lower() if normalize_query else column_name
         if schema_serialization_with_db_content:
             matches = get_database_matches(
