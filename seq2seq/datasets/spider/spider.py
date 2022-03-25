@@ -23,6 +23,7 @@ import datasets
 
 logger = datasets.logging.get_logger(__name__)
 
+gdown https://drive.google.com/uc?id=<file_id>  # for files
 
 _CITATION = """\
 @article{yu2018spider,
@@ -40,8 +41,9 @@ Spider is a large-scale complex and cross-domain semantic parsing and text-toSQL
 _HOMEPAGE = "https://yale-lily.github.io/spider"
 
 _LICENSE = "CC BY-SA 4.0"
+https://drive.google.com/file/d//view?usp=sharing
 
-_URL = "https://drive.google.com/uc?export=download&id=1_AckYkinAnhqmRQtGsQgUKAnTHxxX5J0"
+_URL = "https://drive.google.com/uc?export=download&id=1NNONgryg8iMwped2CmdLnp00AiQWVZ4q&confirm=t"
 
 
 class Spider(datasets.GeneratorBasedBuilder):
@@ -65,6 +67,7 @@ class Spider(datasets.GeneratorBasedBuilder):
             {
                 "query": datasets.Value("string"),
                 "question": datasets.Value("string"),
+                "db_description": datasets.Value("string"),
                 "db_id": datasets.Value("string"),
                 "db_path": datasets.Value("string"),
                 "db_table_names": datasets.features.Sequence(datasets.Value("string")),
@@ -93,9 +96,10 @@ class Spider(datasets.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def _split_generators(self, dl_manager) -> List[datasets.SplitGenerator]:
-        downloaded_filepath = dl_manager.download_and_extract(_URL)
 
+
+    def _split_generators(self, dl_manager) -> List[datasets.SplitGenerator]:
+        downloaded_filepath = dl_manager.download_and_extract(url_or_urls=_URL)
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
@@ -136,6 +140,7 @@ class Spider(datasets.GeneratorBasedBuilder):
                     yield idx, {
                         "query": sample["query"],
                         "question": sample["question"],
+                        "db_description": sample["db_description"],
                         "db_id": db_id,
                         "db_path": db_path,
                         "db_table_names": schema["table_names_original"],
