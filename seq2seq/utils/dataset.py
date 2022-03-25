@@ -488,7 +488,7 @@ def serialize_schema(
 #         elif i in pair2 and (pair1[pair2.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
 #           column_ref_id = pair1[pair2.index(i)]
         
-#         if column_ref_id != -1:
+#         if column_ref_id != -1 and schema_serialization_with_foreign_keys:
             
 #             # primary_key_column = db_column_names['column_name'][column_ref_id]
 #             # primary_key_column = primary_key_column.lower() if normalize_query else primary_key_column
