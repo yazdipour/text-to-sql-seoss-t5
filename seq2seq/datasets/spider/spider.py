@@ -23,7 +23,6 @@ import datasets
 
 logger = datasets.logging.get_logger(__name__)
 
-gdown https://drive.google.com/uc?id=<file_id>  # for files
 
 _CITATION = """\
 @article{yu2018spider,
@@ -41,9 +40,8 @@ Spider is a large-scale complex and cross-domain semantic parsing and text-toSQL
 _HOMEPAGE = "https://yale-lily.github.io/spider"
 
 _LICENSE = "CC BY-SA 4.0"
-https://drive.google.com/file/d//view?usp=sharing
 
-_URL = "https://drive.google.com/uc?export=download&id=1NNONgryg8iMwped2CmdLnp00AiQWVZ4q&confirm=t"
+_URL = "https://drive.google.com/uc?export=download&id=1_AckYkinAnhqmRQtGsQgUKAnTHxxX5J0&confirm=t"
 
 
 class Spider(datasets.GeneratorBasedBuilder):
