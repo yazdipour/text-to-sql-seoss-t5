@@ -26,13 +26,13 @@ This will create a docker image:
 ```
 $ make build-eval-image
 ```
-
+!Warning: building the image takes around 2 hours the first time.
 
 ### Training
 
 The training script is located in `seq2seq/run_seq2seq.py`.
 
-Before running it, you need to create a docker image manually using the Prerequisite command. Then you need to manually change the image within 'docker run' from the Makefile to your docker image. Then, you can simply run:
+Before running it, you need to create a docker image manually using the Prerequisite command from above. Then you need to manually change the image within 'docker run' from the Makefile to your docker image. Then, you can simply run:
 
 ```
 $ make train
@@ -41,9 +41,9 @@ The model will be trained on the Spider dataset by default.
 
 To run it on Datasaur, change in configs/train.json the field 'model-name-or-path' to 'datasaur'
 
-To enable Foreign Keys Serialization, set in the same config file to "schema_serialization_with_foreign_keys" to true
+To enable Foreign Keys Serialization, set in the same config file to 'schema_serialization_with_foreign_keys' to true
 
-To enable Schema Augumentation, set in the same config file to "schema_serialization_with_db_description" to true
+To enable Schema Augumentation, set in the same config file to 'schema_serialization_with_db_description' to true
 
 ### Evaluation
 
@@ -76,7 +76,7 @@ $ make serve
 ### Pre-training Script
 Pre-training script is located in /picard/pre-training/script.ipynb. You need to set the file with crawled data (https://huggingface.co/datasets/elena-soare/crawled-ecommerce/blob/main/train.json) within the same directory to run the code.
 
-The files used to crawl e-commerce Common Crawl data are in /picard/pre-training/crawling_data. To run it, you would need an AWS account, setting up AWS Athena columnar index (https://skeptric.com/common-crawl-index-athena/ -> tutorial). And obtain a file with the Authentication Credentials.
+The files used to crawl e-commerce Common Crawl data are in /picard/pre-training/crawling_data/. To run it, you would need an AWS account, set up AWS Athena columnar index (https://skeptric.com/common-crawl-index-athena/ -> tutorial). And obtain a file with the Authentication Credentials.
 
 Build virtualenv and install requirements:
 ```
@@ -88,5 +88,9 @@ to be co-located with common crawl data). Format:
 Access key ID,Secret access key,staging path,region
 XXX,YYY,ZZZ,us-east-1
 ```
+
+The function run_build_corpus() in common_crawl.py should connect to AWS Athena and crawl the data.
+To convert html pages to text and santize the crawled data, you can find the code in html_to_text.py.
+
 
 
