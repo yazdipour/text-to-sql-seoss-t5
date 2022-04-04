@@ -30,10 +30,13 @@ You can run it with:
 ```
 $ make train
 ```
-The model will be trained on the Spider dataset by default.
+The model will be trained on the Spider dataset by default. 
+
 To run it on Datasaur, change in configs/train.json the field 'model-name-or-path' to 'datasaur'
-To enable Foreign Keys Serialization, set "schema_serialization_with_foreign_keys" to true
-To enable Schema Augumentation, set "schema_serialization_with_db_description" to true
+
+To enable Foreign Keys Serialization, set in the same config file to "schema_serialization_with_foreign_keys" to true
+
+To enable Schema Augumentation, set in the same config file to "schema_serialization_with_db_description" to true
 
 ### Evaluation
 
@@ -46,11 +49,11 @@ By default, the evaluation will be run on the Spider evaluation set.
 
 The default configuration is stored in `configs/eval.json`.
 
-To enable Foreign Keys Serialization, set "schema_serialization_with_foreign_keys" to true & add the corresponding model to the Huggingface fine-tuned model
+To enable Foreign Keys Serialization, set "schema_serialization_with_foreign_keys" to true and add the corresponding model to the Huggingface fine-tuned model 'elena-soare/bat-fk-base'
 
-To run the Pre-trained E-commerce model, leave the baseline configurations and set the model name or path to the Huggingface checkpoint
+To run the Pre-trained E-commerce model, leave the baseline configurations and set the model name or path to the Huggingface checkpoint (the default one)
 
-To enable Schema Augumentation, set "schema_serialization_with_db_description" to true & the corresponding model to the Huggingface fine-tuned model
+To enable Schema Augumentation, set "schema_serialization_with_db_description" to true and the corresponding model to the Huggingface fine-tuned model
 
 ### Serving
 
@@ -62,3 +65,21 @@ You can start serving with:
 ```
 $ make serve
 ```
+
+### Pre-training Script
+Pre-training script is located in /picard/pre-training/script.ipynb. You need to set the file with crawled data (https://huggingface.co/datasets/elena-soare/crawled-ecommerce/blob/main/train.json) within the same directory to run the code.
+
+The files used to crawl e-commerce Common Crawl data are in /picard/pre-training/crawling_data. To run it, you would need an AWS account, setting up AWS Athena columnar index (https://skeptric.com/common-crawl-index-athena/ -> tutorial). An include a file with the Authentication Credentials.
+## Setup
+Build virtualenv and install requirements:
+```
+pip3 install -r requirements 
+```
+Paste `credentials.csv` into `complex_task_search` parent directory for AWS credentials (region should be `us-east-1` 
+to be co-located with common crawl data). Format:
+```
+Access key ID,Secret access key,staging path,region
+XXX,YYY,ZZZ,us-east-1
+```
+
+
