@@ -69,8 +69,8 @@ $ make serve
 ### Pre-training Script
 Pre-training script is located in /picard/pre-training/script.ipynb. You need to set the file with crawled data (https://huggingface.co/datasets/elena-soare/crawled-ecommerce/blob/main/train.json) within the same directory to run the code.
 
-The files used to crawl e-commerce Common Crawl data are in /picard/pre-training/crawling_data. To run it, you would need an AWS account, setting up AWS Athena columnar index (https://skeptric.com/common-crawl-index-athena/ -> tutorial). An include a file with the Authentication Credentials.
-## Setup
+The files used to crawl e-commerce Common Crawl data are in /picard/pre-training/crawling_data. To run it, you would need an AWS account, setting up AWS Athena columnar index (https://skeptric.com/common-crawl-index-athena/ -> tutorial). And obtain a file with the Authentication Credentials.
+
 Build virtualenv and install requirements:
 ```
 pip3 install -r requirements 
