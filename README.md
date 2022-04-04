@@ -1,5 +1,5 @@
 
-E-commerce data assistant: Injecting knowledge in seq2seq SQL generation
+# E-commerce data assistant: Injecting knowledge in seq2seq SQL generation
 
 This code is based on:
 
@@ -20,13 +20,20 @@ This repository uses git submodules. Clone it like this:
 $ git clone git@github.com:elena-soare/picard.git
 $ cd picard
 $ git submodule update --init --recursive
+
+```
+This will create a docker image:
+```
 $ make build-eval-image
 ```
+
 
 ### Training
 
 The training script is located in `seq2seq/run_seq2seq.py`.
-You can run it with:
+
+Before running it, you need to create a docker image manually using the Prerequisite command. Then you need to manually change the image within 'docker run' from the Makefile to your docker image. Then, you can simply run:
+
 ```
 $ make train
 ```
