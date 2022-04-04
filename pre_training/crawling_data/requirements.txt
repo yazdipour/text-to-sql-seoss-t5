@@ -1,0 +1,14 @@
+beautifulsoup4==4.8.0
+requests
+python-dateutil==2.8.0
+boto3
+pandas
+PyAthena==2.3.1
+warcio==1.7.4
+joblib
+protobuf==3.14.0
+pystream-protobuf==1.6.3
+google
+boilerplate3
+
+

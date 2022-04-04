@@ -34,14 +34,17 @@ def spider_add_serialized_schema(ex: dict, data_training_args: DataTrainingArgum
         db_table_names=ex["db_table_names"],
         db_foreign_keys=ex['db_foreign_keys'],
         db_primary_keys=ex['db_primary_keys'],
+        description=ex['db_description'],
         schema_serialization_type=data_training_args.schema_serialization_type,
         schema_serialization_randomized=data_training_args.schema_serialization_randomized,
         schema_serialization_with_db_id=data_training_args.schema_serialization_with_db_id,
         schema_serialization_with_db_content=data_training_args.schema_serialization_with_db_content,
         schema_serialization_with_foreign_keys=data_training_args.schema_serialization_with_foreign_keys,
+        schema_serialization_with_db_description=data_training_args.schema_serialization_with_db_description,
         normalize_query=data_training_args.normalize_query,
     )
     return {"serialized_schema": serialized_schema}
+
 
 
 def spider_pre_process_function(
