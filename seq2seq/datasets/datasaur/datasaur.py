@@ -116,7 +116,7 @@ class Datasaur(datasets.GeneratorBasedBuilder):
                     yield idx, {
                         "query": sample["query"],
                         "question": sample["question"],
-                        "db_description": sample["db_description"],
+                        "db_description": "Sales: contains sum of each metric for each store at a specific time. Timestamp is the date and time when the data is collected. store is the id of the store. gross revenue company is the total sales revenue in pounds, before the tax and goods value has been substracted. gross revenue native is the total sales revenue in the store local currency. shipping native is the total delivery costs in the shop local currency. total tax native is the sum of taxes in the shop local currency for a specific shop and time. total tax company is the total sum of taxes in pounds. orders is number of total successful purchases placed by customers. sessions is the total number of website connections made by clients to the store online website. product views is the total sum of website products the clients looked at a specific time. add to carts is the number of items added to a basket. refunds native is the total money in store currency when products are returned by customers. refunds company is the total money in pounds of items returned. conversion rate is the customer satisfaction metric.",
                         "db_id": db_id,
                         "db_path": db_path,
                         "db_table_names": schema["table_names_original"],
