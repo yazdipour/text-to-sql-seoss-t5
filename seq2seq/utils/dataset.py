@@ -141,6 +141,7 @@ class DataArguments:
     dataset_paths: Dict[str, str] = field(
         default_factory=lambda: {
             "spider": "./seq2seq/datasets/spider",
+            "spider_dk": "./seq2seq/datasets/spider_dk",
             "cosql": "./seq2seq/datasets/cosql",
             "datasaur": "./seq2seq/datasets/datasaur",
         },
@@ -153,6 +154,7 @@ class DataArguments:
     metric_paths: Dict[str, str] = field(
         default_factory=lambda: {
             "spider": "./seq2seq/metrics/spider",
+            "spider_dk":"./seq2seq/metrics/spider",
             "cosql": "./seq2seq/metrics/cosql",
             "datasaur": "./seq2seq/metrics/datasaur",
         },
@@ -352,7 +354,7 @@ def serialize_schema(
     schema_serialization_with_db_id: bool = True,
     schema_serialization_with_db_content: bool = False,
     schema_serialization_with_foreign_keys: bool = False,
-    schema_serialization_with_db_description: bool = False,
+    schema_serialization_with_db_description:bool = True,
     normalize_query: bool = True,
 ) -> str:
     print(db_primary_keys)
@@ -361,12 +363,8 @@ def serialize_schema(
     foreign = {}
 # {'table_id': [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3], 'column_name': ['*', 'Stadium_ID', 'Location', 'Name', 'Capacity', 'Highest', 'Lowest', 'Average', 'Singer_ID', 'Name', 'Country', 'Song_Name', 'Song_release_year', 'Age', 'Is_male', 'concert_ID', 'concert_Name', 'Theme', 'Stadium_ID', 'Year', 'concert_ID', 'Singer_ID']}
 
-  
-    for i,j in zip(pair1, pair2):
-      foreign[db_column_names['column_name'][int(i)]] = db_column_names['column_name'][int(j)]
-    print("la la" + str(foreign))
-    print("this data: " + str(question) + str (db_path) + str(db_id) + str(db_column_names) + str(db_table_names))
 
+    desc_sep = " ** "
     if schema_serialization_type == "verbose":
         db_id_str = "Database: {db_id}. "
         table_sep = ". "
@@ -375,7 +373,6 @@ def serialize_schema(
         column_str_with_values = "{column} ({values})"
         column_str_without_values = "{column}"
         value_sep = ", "
-        desc_sep = " <sep> "
     elif schema_serialization_type == "peteshaw":
         # see https://github.com/google-research/language/blob/master/language/nqg/tasks/spider/append_schema.py#L42
         db_id_str = " | {db_id}"
@@ -386,7 +383,6 @@ def serialize_schema(
         column_str_without_values = "{column}"
         column_sep_key=" - "
         value_sep = " , "
-        desc_sep = " <sep> "
     else:
         raise NotImplementedError
 
@@ -415,7 +411,7 @@ def serialize_schema(
         elif i in pair2 and (pair1[pair2.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
           column_ref_id = pair1[pair2.index(i)]
         
-        if column_ref_id != -1 and schema_serialization_with_foreign_keys:
+        if column_ref_id != -1:
             
             # primary_key_column = db_column_names['column_name'][column_ref_id]
             # primary_key_column = primary_key_column.lower() if normalize_query else primary_key_column
@@ -456,3 +452,5 @@ def serialize_schema(
       serialized_schema += desc_sep + description
     print('serilizes: ' + serialized_schema)
     return serialized_schema
+
+
