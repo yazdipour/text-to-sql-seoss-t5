@@ -366,7 +366,7 @@ def serialize_schema(
 # {'table_id': [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3], 'column_name': ['*', 'Stadium_ID', 'Location', 'Name', 'Capacity', 'Highest', 'Lowest', 'Average', 'Singer_ID', 'Name', 'Country', 'Song_Name', 'Song_release_year', 'Age', 'Is_male', 'concert_ID', 'concert_Name', 'Theme', 'Stadium_ID', 'Year', 'concert_ID', 'Singer_ID']}
 
 
-    desc_sep = " ** "
+    desc_sep = " | description | "
     if schema_serialization_type == "verbose":
         db_id_str = "Database: {db_id}. "
         table_sep = ". "
