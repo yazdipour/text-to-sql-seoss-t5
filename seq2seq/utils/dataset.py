@@ -142,6 +142,7 @@ class DataArguments:
         default_factory=lambda: {
             "spider": "./seq2seq/datasets/spider",
             "spider_dk": "./seq2seq/datasets/spider_dk",
+            "spider_syn": "./seq2seq/datasets/spider_syn",
             "cosql": "./seq2seq/datasets/cosql",
             "datasaur": "./seq2seq/datasets/datasaur",
         },
@@ -155,6 +156,7 @@ class DataArguments:
         default_factory=lambda: {
             "spider": "./seq2seq/metrics/spider",
             "spider_dk":"./seq2seq/metrics/spider",
+            "spider_syn":"./seq2seq/metrics/spider",
             "cosql": "./seq2seq/metrics/cosql",
             "datasaur": "./seq2seq/metrics/datasaur",
         },
