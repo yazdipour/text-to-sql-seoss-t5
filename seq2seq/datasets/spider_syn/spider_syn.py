@@ -39,7 +39,7 @@ _HOMEPAGE = "https://zenodo.org/record/5205322#.Yh-B1uhByUl"
 
 _LICENCE = "CC BY-SA 4.0"
 
-_URL = "https://drive.google.com/uc?export=download&id=1yMirREuhJVvki_vH4907R_JmEOsyVxVS&confirm=t"
+_URL = "https://drive.google.com/uc?export=download&id=1XZHXCHiA3qYRsHjF68oo5gtzU_gbGMjo&confirm=t"
 
 class SpiderSyn(datasets.GeneratorBasedBuilder):
     VERSION = datasets.Version("1.0.0")
