@@ -41,7 +41,7 @@ _HOMEPAGE = "https://github.com/ygan/Spider-DK"
 
 _LICENCE = "CC BY-SA 4.0"
 
-_URL = "https://github.com/ygan/Spider-DK/blob/main/Spider-DK.json"
+_URL = "https://drive.google.com/uc?export=download&id=1yQ_mTwF4VzBB1_v5MB48odyXEGao2LrH&confirm=t"
 
 class SpiderDK(datasets.GeneratorBasedBuilder):
     VERSION = datasets.Version("1.0.0")
