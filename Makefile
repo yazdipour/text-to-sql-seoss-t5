@@ -24,6 +24,10 @@ build-picard-deps:
 build-picard:
 		cabal install --overwrite-policy=always --install-method=copy exe:picard
 
+.PHONY: pull-eval-image
+pull-eval-image:
+		docker pull tscholak/text-to-sql-eval:6a252386bed6d4233f0f13f4562d8ae8608e7445
+
 .PHONY: build-eval-image
 build-eval-image:
 		docker build . --tag $(IMAGE_NAME):$(GIT_HEAD_REF) --build-arg BASE_IMAGE=pytorch/pytorch:1.9.0-cuda11.1-cudnn8-devel
@@ -49,13 +53,14 @@ eval:
 		mkdir -p -m 777 eval
 		mkdir -p -m 777 transformers_cache
 		mkdir -p -m 777 wandb
-		docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
-			-it --rm --user root -p 8000:8000 \
-			--mount type=bind,source=/home/datasaur22/picard/eval,target=/eval \
-			--mount type=bind,source=/home/datasaur22/picard/wandb,target=/app/wandb \
-			--mount type=bind,source=/home/datasaur22/picard/transformers_cache,target=/transformers_cache  \
-			--mount type=bind,source=/home/datasaur22/picard/configs,target=/app/configs \
-			1301122/datasaur:$(GIT_HEAD_REF) /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
+		docker run \
+			-it --user root -p 8000:8000 \
+			--mount type=bind,source=$(BASE_DIR)/experiment,target=/app/experiment \
+			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
+			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
+			--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
+			tscholak/text-to-sql-eval:6a252386bed6d4233f0f13f4562d8ae8608e7445 \
+			# /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 
 
