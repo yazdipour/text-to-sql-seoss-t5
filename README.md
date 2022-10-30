@@ -19,6 +19,12 @@ This repository uses git submodules. Clone it like this:
 ```sh
 $ git clone --recurse-submodules https://github.com/totem37/docu-t5.git
 ```
+
+Install Docker on Ubuntu with:
+```
+$ ./install_docker.sh
+```
+
 Pull the PICARD Docker image with:
 ```
 $ make pull-eval-image
