@@ -3,6 +3,7 @@ BASE_IMAGE := pytorch/pytorch:1.9.0-cuda11.1-cudnn8-devel
 IMAGE_NAME := 1301122/datasaur
 BUILDKIT_BUILDER ?= buildx-local
 BASE_DIR := $(shell pwd)
+PICARD_IMAGE := tscholak/text-to-sql-eval:6a252386bed6d4233f0f13f4562d8ae8608e7445
 
 
 .PHONY: build-thrift-code
@@ -26,7 +27,7 @@ build-picard:
 
 .PHONY: pull-eval-image
 pull-eval-image:
-		docker pull tscholak/text-to-sql-eval:6a252386bed6d4233f0f13f4562d8ae8608e7445
+		docker pull $(PICARD_IMAGE)
 
 .PHONY: build-eval-image
 build-eval-image:
@@ -59,7 +60,7 @@ eval:
 			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
 			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
 			--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-			tscholak/text-to-sql-eval:6a252386bed6d4233f0f13f4562d8ae8608e7445 \
+			$(PICARD_IMAGE) \
 			# /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 

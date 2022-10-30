@@ -17,16 +17,12 @@ This code is based on:
 
 This repository uses git submodules. Clone it like this:
 ```sh
-$ git clone git@github.com:elena-soare/picard.git
-$ cd picard
-$ git submodule update --init --recursive
-
+$ git clone --recurse-submodules https://github.com/totem37/docu-t5.git
 ```
-This will create a docker image:
+Pull the PICARD Docker image with:
 ```
-$ make build-eval-image
+$ make pull-eval-image
 ```
-!Warning: building the image takes around 2 hours the first time.
 
 ### Training
 
@@ -48,19 +44,37 @@ To enable Schema Augumentation, set in the same config file to 'schema_serializa
 ### Evaluation
 
 The evaluation script is located in `seq2seq/run_seq2seq.py`.
-You can run it with:
+
+Configuration files are located in `configs/`.
+
+Run evaluation with:
 ```
 $ make eval
 ```
-By default, the evaluation will be run on the Spider evaluation set.
+This puts you in a Docker image, in which you can run:
+```
+$ python seq2seq/run_seq2seq.py configs/eval.json
+```
+Replace `eval.json` with whatever config file you want to run.
 
-The default configuration is stored in `configs/eval.json`.
+Pre-trained models are available on HuggingFace at https://huggingface.co/elena-soare.
 
 To enable Foreign Keys Serialization, set "schema_serialization_with_foreign_keys" to true and add the corresponding model to the Huggingface fine-tuned model 'elena-soare/bat-fk-base'
 
-To run the Pre-trained E-commerce model, leave the baseline configurations and set the model name or path to the Huggingface checkpoint (the default one)
+To run the Pre-trained E-commerce model, leave the baseline configurations and set the model name or path to the Huggingface checkpoint 'elena-soare/bat-pre-trained'
 
-To enable Schema Augumentation, set "schema_serialization_with_db_description" to true and the corresponding model to the Huggingface fine-tuned model
+To enable Schema Augumentation, set "schema_serialization_with_db_description" to true and the corresponding model to the Huggingface fine-tuned model 'elena-soare/docu-t5-large-SD'
+
+For long runs, run the evaluation in the background with:
+```
+$ nohup python seq2seq/run_seq2seq.py configs/eval.json &
+```
+This logs output to `nohup.out`. You can exit the Docker container and close the terminal if you use nohup.
+
+To re-enter the last exited Docker container run:
+```
+$ docker start `docker ps -q -l` && docker attach `docker ps -q -l`i
+```
 
 ### Serving
 
