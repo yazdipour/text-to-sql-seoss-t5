@@ -56,6 +56,7 @@ To enable Schema Augumentation, set in the same config file to 'schema_serializa
 
 For long runs, run the training in the background with:
 ```
+$ wandb login
 $ nohup python seq2seq/run_seq2seq.py configs/train.json &
 ```
 This logs output to `nohup.out`. You can exit the Docker container and close the terminal if you use nohup.
@@ -91,6 +92,7 @@ To enable Schema Augumentation, set "schema_serialization_with_db_description" t
 
 For long runs, run the evaluation in the background with:
 ```
+$ wandb login
 $ nohup python seq2seq/run_seq2seq.py configs/eval.json &
 ```
 This logs output to `nohup.out`. You can exit the Docker container and close the terminal if you use nohup.
