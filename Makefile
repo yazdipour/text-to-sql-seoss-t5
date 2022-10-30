@@ -39,13 +39,16 @@ train:
 		mkdir -p -m 777 train
 		mkdir -p -m 777 transformers_cache
 		mkdir -p -m 777 wandb
-		docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
-    		-it --rm --user root -p 8000:8000 \
-			--mount type=bind,source=/home/datasaur22/picard/train,target=/train \
-			--mount type=bind,source=/home/datasaur22/picard/wandb,target=/app/wandb \
-			--mount type=bind,source=/home/datasaur22/picard/transformers_cache,target=/transformers_cache  \
-			--mount type=bind,source=/home/datasaur22/picard/configs,target=/app/configs \
-			1301122/datasaur:$(GIT_HEAD_REF) /bin/bash -c "python seq2seq/run_seq2seq.py configs/train.json"
+		# --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all
+		docker run \
+    			-it --rm --user root -p 8000:8000 \
+			--mount type=bind,source=$(BASE_DIR)/train,target=/train \
+			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
+			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
+			--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
+			$(PICARD_IMAGE) \
+	       		# /bin/bash -c "python seq2seq/run_seq2seq.py configs/train.json"
+			# 1301122/datasaur:$(GIT_HEAD_REF)
 
 
 
@@ -67,13 +70,13 @@ eval:
 
 
 .PHONY: serve
-serve:	
+serve:
 		mkdir -p -m 777 transformers_cache
 		mkdir -p -m 777 wandb
 		docker run -ti --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
 			-it --rm --user root -p 8000:8000 \
-			--mount type=bind,source=/home/datasaur22/picard/database,target=/database \
-			--mount type=bind,source=/home/datasaur22/picard/transformers_cache,target=/transformers_cache  \
-			--mount type=bind,source=/home/datasaur22/picard/configs,target=/app/configs \
+			--mount type=bind,source=$(BASE_DIR)/database,target=/database \
+			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
+			--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
 			1301122/datasaur:$(GIT_HEAD_REF) /bin/bash -c "python seq2seq/serve_seq2seq.py configs/serve.json"
 

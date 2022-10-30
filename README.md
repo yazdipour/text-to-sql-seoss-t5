@@ -28,11 +28,18 @@ $ make pull-eval-image
 
 The training script is located in `seq2seq/run_seq2seq.py`.
 
-Before running it, you need to create a docker image manually using the Prerequisite command from above. Then you need to manually change the image within 'docker run' from the Makefile to your docker image. Then, you can simply run:
+Configuration files are located in `configs/`.
 
+Run training with:
 ```
 $ make train
 ```
+This puts you in a Docker image, in which you can run:
+```
+$ python seq2seq/run_seq2seq.py configs/train.json
+```
+Replace `train.json` with whatever config file you want to run.
+
 The model will be trained on the Spider dataset by default. 
 
 To run it on Datasaur, change in configs/train.json the field 'model-name-or-path' to 'datasaur'
@@ -40,6 +47,17 @@ To run it on Datasaur, change in configs/train.json the field 'model-name-or-pat
 To enable Foreign Keys Serialization, set in the same config file to 'schema_serialization_with_foreign_keys' to true
 
 To enable Schema Augumentation, set in the same config file to 'schema_serialization_with_db_description' to true
+
+For long runs, run the training in the background with:
+```
+$ nohup python seq2seq/run_seq2seq.py configs/train.json &
+```
+This logs output to `nohup.out`. You can exit the Docker container and close the terminal if you use nohup.
+
+To re-enter the last exited Docker container run:
+```
+$ docker start `docker ps -q -l` && docker attach `docker ps -q -l`i
+```
 
 ### Evaluation
 
