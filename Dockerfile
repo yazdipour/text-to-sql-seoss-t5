@@ -55,6 +55,8 @@ RUN curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
         bison \
         flex \
         libsodium-dev \
+	ninja-build \
+	libzstd-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 COPY --chown=$TOOLKIT_USER_ID:$TOOLKIT_GROUP_ID third_party/zstd /app/third_party/zstd/
@@ -112,6 +114,8 @@ RUN cd /app/third_party/wangle \
     && cd .. \
     && rm -rf _build
 COPY --chown=$TOOLKIT_USER_ID:$TOOLKIT_GROUP_ID third_party/fbthrift /app/third_party/fbthrift/
+#     && apt update \
+#     && ./build/fbcode_builder/getdeps.py install-system-deps --recursive fbthrift
 RUN cd /app/third_party/fbthrift \
     && mkdir _build \
     && cd _build \
@@ -202,9 +206,9 @@ COPY --chown=$TOOLKIT_USER_ID:$TOOLKIT_GROUP_ID third_party/hsthrift /app/third_
 RUN cd /app/third_party/hsthrift \
     && make thrift-cpp \
     && cabal update \
-#    && echo "makes it here" \
+    #&& echo "makes it here" \
     && cabal build exe:thrift-compiler \
-#    && echo "but not here" \
+    #&& echo "but not here" \
     && make thrift-hs \
     && cabal install exe:thrift-compiler \
     && cabal clean \
