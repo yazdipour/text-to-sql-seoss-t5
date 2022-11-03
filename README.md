@@ -25,12 +25,12 @@ Install Docker on Ubuntu with:
 ./install_docker.sh
 ```
 
-Pull the PICARD Docker image with:
+Pull the DocuT5 Docker image with:
 ```
 make pull-eval-image
 ```
 
-Alternatively, build the DocuT5 image from scratch with:
+Alternatively, you can build the DocuT5 image from scratch. This is necessary if changes have been made to the model. To do this run:
 ```
 make build-eval-image
 ```
@@ -68,7 +68,7 @@ This logs output to `nohup.out`. You can exit the Docker container and close the
 
 To re-enter the last exited Docker container run:
 ```
-docker start `docker ps -q -l` && docker attach `docker ps -q -l`i
+docker start `docker ps -q -l` && docker attach `docker ps -q -l`
 ```
 
 ### Evaluation
@@ -104,7 +104,7 @@ This logs output to `nohup.out`. You can exit the Docker container and close the
 
 To re-enter the last exited Docker container run:
 ```
-docker start `docker ps -q -l` && docker attach `docker ps -q -l`i
+docker start `docker ps -q -l` && docker attach `docker ps -q -l`
 ```
 
 ### Serving

@@ -1,9 +1,9 @@
 GIT_HEAD_REF := $(shell git rev-parse HEAD)
 BASE_IMAGE := pytorch/pytorch:1.9.0-cuda11.1-cudnn8-devel
-IMAGE_NAME := 1301122/datasaur
+IMAGE_NAME := totem37/docu-t5
+IMAGE_TAG := 03112022
 BUILDKIT_BUILDER ?= buildx-local
 BASE_DIR := $(shell pwd)
-PICARD_IMAGE := tscholak/text-to-sql-eval:6a252386bed6d4233f0f13f4562d8ae8608e7445
 
 
 .PHONY: build-thrift-code
@@ -27,7 +27,7 @@ build-picard:
 
 .PHONY: pull-eval-image
 pull-eval-image:
-		docker pull $(PICARD_IMAGE)
+		docker pull $(IMAGE_NAME):$(IMAGE_TAG)
 
 .PHONY: build-eval-image
 build-eval-image:
@@ -46,9 +46,8 @@ train:
 			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
 			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
 			--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-			$(IMAGE_NAME):$(GIT_HEAD_REF) \
+			$(IMAGE_NAME):$(IMAGE_TAG) \
 	       		# /bin/bash -c "python seq2seq/run_seq2seq.py configs/train.json"
-			# 1301122/datasaur:$(GIT_HEAD_REF)
 
 
 
@@ -63,7 +62,7 @@ eval:
 			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
 			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
 			--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-			$(IMAGE_NAME):$(GIT_HEAD_REF) \
+			$(IMAGE_NAME):$(IMAGE_TAG) \
 			# /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 
