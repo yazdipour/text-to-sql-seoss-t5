@@ -17,17 +17,22 @@ This code is based on:
 
 This repository uses git submodules. Clone it like this:
 ```sh
-$ git clone --recurse-submodules https://github.com/totem37/docu-t5.git
+git clone --recurse-submodules https://github.com/totem37/docu-t5.git
 ```
 
 Install Docker on Ubuntu with:
 ```
-$ ./install_docker.sh
+./install_docker.sh
 ```
 
 Pull the PICARD Docker image with:
 ```
-$ make pull-eval-image
+make pull-eval-image
+```
+
+Alternatively, build the DocuT5 image from scratch with:
+```
+make build-eval-image
 ```
 
 ### Training
@@ -38,11 +43,11 @@ Configuration files are located in `configs/`.
 
 Run training with:
 ```
-$ make train
+make train
 ```
 This puts you in a Docker image, in which you can run:
 ```
-$ python seq2seq/run_seq2seq.py configs/train.json
+python seq2seq/run_seq2seq.py configs/train.json
 ```
 Replace `train.json` with whatever config file you want to run.
 
@@ -56,14 +61,14 @@ To enable Schema Augumentation, set in the same config file to 'schema_serializa
 
 For long runs, run the training in the background with:
 ```
-$ wandb login
-$ nohup python seq2seq/run_seq2seq.py configs/train.json &
+wandb login
+nohup python seq2seq/run_seq2seq.py configs/train.json &
 ```
 This logs output to `nohup.out`. You can exit the Docker container and close the terminal if you use nohup.
 
 To re-enter the last exited Docker container run:
 ```
-$ docker start `docker ps -q -l` && docker attach `docker ps -q -l`i
+docker start `docker ps -q -l` && docker attach `docker ps -q -l`i
 ```
 
 ### Evaluation
@@ -74,11 +79,11 @@ Configuration files are located in `configs/`.
 
 Run evaluation with:
 ```
-$ make eval
+make eval
 ```
 This puts you in a Docker image, in which you can run:
 ```
-$ python seq2seq/run_seq2seq.py configs/eval.json
+python seq2seq/run_seq2seq.py configs/eval.json
 ```
 Replace `eval.json` with whatever config file you want to run.
 
@@ -92,14 +97,14 @@ To enable Schema Augumentation, set "schema_serialization_with_db_description" t
 
 For long runs, run the evaluation in the background with:
 ```
-$ wandb login
-$ nohup python seq2seq/run_seq2seq.py configs/eval.json &
+wandb login
+nohup python seq2seq/run_seq2seq.py configs/eval.json &
 ```
 This logs output to `nohup.out`. You can exit the Docker container and close the terminal if you use nohup.
 
 To re-enter the last exited Docker container run:
 ```
-$ docker start `docker ps -q -l` && docker attach `docker ps -q -l`i
+docker start `docker ps -q -l` && docker attach `docker ps -q -l`i
 ```
 
 ### Serving
@@ -110,7 +115,7 @@ The configuration file can be found in `configs/serve.json`.
 
 You can start serving with:
 ```
-$ make serve
+make serve
 ```
 
 ### Pre-training Script
