@@ -63,7 +63,7 @@ eval:
 			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
 			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
 			--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
-			$(PICARD_IMAGE) \
+			$(IMAGE_NAME):$(GIT_HEAD_REF) \
 			# /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
 

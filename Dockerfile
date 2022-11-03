@@ -178,8 +178,8 @@ RUN buildDeps=" \
     apt-get update \
     && apt-get install -y --no-install-recommends $buildDeps $deps \
     && curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh \
-    && ghcup install ghc base-4.13.0.0 \
-    && ghcup set ghc "8.8.4" \
+    && ghcup install ghc base-4.14.1.0 \
+    && ghcup set ghc "8.10.4" \
     && export PATH="/app/.ghcup/bin:$PATH" \
     && ghcup install cabal 3.8.1.0 \
     && cabal update \
@@ -189,10 +189,10 @@ RUN buildDeps=" \
     && git clone https://github.com/haskell/cabal.git \
     && cd cabal \
     && git checkout HEAD \
-    && sed -i 's/3.5.0.0/3.8.0.0/' */*.cabal \
+    && sed -i 's/3.5.0.0/3.8.1.0/' */*.cabal \
     && cabal install --package-env . cabal-install/ \
 #	--allow-newer=all \
-	--constraint 'base ==4.13.0.0' \
+#	--constraint 'base ==4.13.0.0' \
 #	 --allow-older=all \
         --allow-newer=Cabal-QuickCheck:Cabal \
         --allow-newer=Cabal-described:Cabal \
@@ -228,7 +228,7 @@ RUN cd /app/third_party/hsthrift \
     && rm -rf /app/.cabal/packages/* \
     && rm -rf /app/.cabal/logs/* \
     && chown -h $TOOLKIT_USER_ID:$TOOLKIT_GROUP_ID /app/.cabal/bin/thrift-compiler \
-    && find /app/.cabal/store/ghc-8.8.*/ -maxdepth 2 -type d -group root -exec chown -R $TOOLKIT_USER_ID:$TOOLKIT_GROUP_ID {} \; \
+    && find /app/.cabal/store/ghc-8.10.*/ -maxdepth 2 -type d -group root -exec chown -R $TOOLKIT_USER_ID:$TOOLKIT_GROUP_ID {} \; \
     && find . -group root -exec chown $TOOLKIT_USER_ID:$TOOLKIT_GROUP_ID {} \;
 
 # Install misc utilities and add toolkit user
