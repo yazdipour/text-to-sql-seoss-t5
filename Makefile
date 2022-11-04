@@ -41,7 +41,7 @@ train:
 		mkdir -p -m 777 wandb
 		# --runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all
 		docker run \
-    			-it --rm --user root -p 8000:8000 \
+    			-it --gpus all --rm --user root -p 8000:8000 \
 			--mount type=bind,source=$(BASE_DIR)/train,target=/train \
 			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
 			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
@@ -57,7 +57,7 @@ eval:
 		mkdir -p -m 777 transformers_cache
 		mkdir -p -m 777 wandb
 		docker run \
-			-it --user root -p 8000:8000 \
+			-it --gpus all --user root -p 8000:8000 \
 			--mount type=bind,source=$(BASE_DIR)/experiment,target=/app/experiment \
 			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
 			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
