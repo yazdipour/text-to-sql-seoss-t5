@@ -22,6 +22,7 @@ git clone --recurse-submodules https://github.com/totem37/docu-t5.git
 
 Install Docker on Ubuntu with:
 ```
+cd docu-t5
 ./install_docker.sh
 ```
 
