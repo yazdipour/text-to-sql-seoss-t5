@@ -144,7 +144,7 @@ dist-newstyle
 
 # Modelling artifacts
 train/*
-eval/*
+#eval/*
 transformers_cache/*
 wandb/*
 database/*

@@ -31,6 +31,8 @@ from seq2seq.utils.dataset_loader import load_dataset
 from seq2seq.utils.spider import SpiderTrainer
 from seq2seq.utils.cosql import CoSQLTrainer
 
+from seq2seq.eval_spider.format_predictions import format_predictions
+
 
 def main() -> None:
     # See all possible arguments by passing the --help flag to this script.
@@ -249,6 +251,15 @@ def main() -> None:
 
             trainer.log_metrics("eval", metrics)
             trainer.save_metrics("eval", metrics)
+
+            # Print full eval metrics for Spider
+            try:
+                if isinstance(trainer, SpiderTrainer):
+                    format_predictions(f"{training_args.output_dir}/predictions_eval_None.json")
+                    os.system(f"cd eval_spider && python evaluate.py --gold ../../dataset_files/ori_dataset/spider/dev_gold.sql --pred {training_args.output_dir}/predictions.sql --etype all --db ../../dataset_files/ori_dataset/spider/database --table ../../dataset_files/ori_dataset/spider/tables.json")
+            except Exception as e:
+                print(e)
+                print("The detailed evaluation threw an error, skipping.")
 
         # Testing
         if training_args.do_predict:
