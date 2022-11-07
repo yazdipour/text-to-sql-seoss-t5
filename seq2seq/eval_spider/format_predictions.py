@@ -21,7 +21,7 @@ def format_predictions(in_filename):
     with open(in_filename, 'r') as input_file:
         all_predictions = json.loads(input_file.read())
         for p in all_predictions:
-            predicted_queries.append(p['prediction'].split('| ')[1])
+            predicted_queries.append(p['prediction'].split('| ')[-1])
 
     out_filename = get_sql_predictions_filename(in_filename)
 
