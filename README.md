@@ -74,6 +74,11 @@ docker start `docker ps -q -l` && docker attach `docker ps -q -l`
 
 ### Evaluation
 
+If you want a full evaluation of Spider, first run:
+```
+./download_datasets.sh
+```
+
 The evaluation script is located in `seq2seq/run_seq2seq.py`.
 
 Configuration files are located in `configs/`.
