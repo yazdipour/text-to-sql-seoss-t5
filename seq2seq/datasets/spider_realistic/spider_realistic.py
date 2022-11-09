@@ -61,6 +61,7 @@ class SpiderRealistic(datasets.GeneratorBasedBuilder):
             {
                 "query": datasets.Value("string"),
                 'question': datasets.Value('string'),
+                "db_description": datasets.Value("string"),
                 "db_id": datasets.Value("string"),
                 "db_path": datasets.Value("string"),
                 "db_table_names": datasets.features.Sequence(datasets.Value("string")),
@@ -122,6 +123,7 @@ class SpiderRealistic(datasets.GeneratorBasedBuilder):
                     yield idx, {
                         "query": sample['query'],
                         "question": sample['question'],
+                        "db_description": sample["db_description"],
                         "db_id": db_id,
                         "db_path": db_path,
                         "db_table_names": schema["table_names_original"],

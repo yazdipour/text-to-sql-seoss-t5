@@ -32,7 +32,7 @@ from seq2seq.utils.spider import SpiderTrainer
 from seq2seq.utils.cosql import CoSQLTrainer
 
 from seq2seq.eval_spider.format_predictions import format_predictions
-from seq2seq.eval_spider.evaluate import evaluate, build_foreign_key_map_from_json
+from seq2seq.eval_spider.evaluation import evaluate, build_foreign_key_map_from_json
 
 
 def main() -> None:
@@ -198,7 +198,7 @@ def main() -> None:
             "target_with_db_id": data_training_args.target_with_db_id,
         }
         #using spidertrainer as it is.
-        if data_args.dataset in ["spider", "spider_realistic", "spider_syn", "spider_dk"]:
+        if data_args.dataset.replace('-', '_') in ["spider", "spider_realistic", "spider_syn", "spider_dk"]:
             trainer = SpiderTrainer(**trainer_kwargs)
         elif data_args.dataset in ["cosql", "cosql+spider"]:
             trainer = CoSQLTrainer(**trainer_kwargs)
@@ -264,9 +264,9 @@ def main() -> None:
             try:
                 if isinstance(trainer, SpiderTrainer):
                     format_predictions(f"{training_args.output_dir}/predictions_eval_None.json")
-                    gold = f"{training_args.output_dir}/../../dataset_files/ori_dataset/{data_args.dataset}/dev_gold.sql"
+                    gold = f"{training_args.output_dir}/../../dataset_files/ori_dataset/{data_args.dataset.replace('_', '-')}/dev_gold.sql"
                     pred = f"{training_args.output_dir}/predictions.sql"
-                    db_dir = f"{training_args.output_dir}/../../dataset_files/ori_dataset/{data_args.dataset}/database"
+                    db_dir = f"{training_args.output_dir}/../../dataset_files/ori_dataset/{data_args.dataset.replace('_', '-')}/database"
                     etype = "all"
                     kmaps = build_foreign_key_map_from_json(table)
                     evaluate(gold, pred, db_dir, etype, kmaps)

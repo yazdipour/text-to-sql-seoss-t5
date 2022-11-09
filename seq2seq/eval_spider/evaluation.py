@@ -26,7 +26,7 @@ import sqlite3
 import traceback
 import argparse
 
-from process_sql import tokenize, get_schema, get_tables_with_alias, Schema, get_sql
+from seq2seq.eval_spider.process_sql import tokenize, get_schema, get_tables_with_alias, Schema, get_sql
 
 # Flag to disable value evaluation
 DISABLE_VALUE = True
