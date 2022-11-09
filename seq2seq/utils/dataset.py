@@ -372,7 +372,6 @@ def serialize_schema(
     schema_serialization_with_db_description:bool = True,
     normalize_query: bool = True,
 ) -> str:
-    print(db_primary_keys)
     pair1 = db_foreign_keys['column_id']
     pair2 = db_foreign_keys['other_column_id']
     foreign = {}
@@ -465,7 +464,6 @@ def serialize_schema(
         serialized_schema = table_sep.join(tables)
     if schema_serialization_with_db_description:
       serialized_schema += desc_sep + description
-    print('serilizes: ' + serialized_schema)
     return serialized_schema
 
 
