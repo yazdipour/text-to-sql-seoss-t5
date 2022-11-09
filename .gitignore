@@ -149,3 +149,4 @@ transformers_cache/*
 wandb/*
 database/*
 dataset_files/*
+.DS_Store

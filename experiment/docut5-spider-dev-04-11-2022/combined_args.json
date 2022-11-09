@@ -19,7 +19,8 @@
         "spider_dk": "./seq2seq/datasets/spider_dk",
         "spider_syn": "./seq2seq/datasets/spider_syn",
         "cosql": "./seq2seq/datasets/cosql",
-        "datasaur": "./seq2seq/datasets/datasaur"
+        "datasaur": "./seq2seq/datasets/datasaur",
+        "spider_realistic": "./seq2seq/datasets/spider_realistic"
     },
     "metric_config": "both",
     "metric_paths": {
@@ -27,7 +28,8 @@
         "spider_dk": "./seq2seq/metrics/spider",
         "spider_syn": "./seq2seq/metrics/spider",
         "cosql": "./seq2seq/metrics/cosql",
-        "datasaur": "./seq2seq/metrics/datasaur"
+        "datasaur": "./seq2seq/metrics/datasaur",
+        "spider_realistic": "./seq2seq/metrics/spider"
     },
     "test_suite_db_dir": null,
     "data_config_file": null,
@@ -43,6 +45,7 @@
     "num_beams": 4,
     "num_beam_groups": 1,
     "diversity_penalty": 0.0,
+    "num_return_sequences": null,
     "ignore_pad_token_for_loss": true,
     "source_prefix": "",
     "schema_serialization_type": "peteshaw",
@@ -53,7 +56,7 @@
     "schema_serialization_with_db_description": true,
     "normalize_query": true,
     "target_with_db_id": true,
-    "output_dir": "/eval",
+    "output_dir": "./experiment/docut5-spider-dev-04-11-2022",
     "overwrite_output_dir": false,
     "do_train": false,
     "do_eval": true,
@@ -80,7 +83,7 @@
     "log_level": -1,
     "log_level_replica": -1,
     "log_on_each_node": true,
-    "logging_dir": "/eval/runs/Nov04_12-33-59_ff4b76b7114d",
+    "logging_dir": "./experiment/docut5-spider-dev-04-11-2022/runs/Nov08_12-59-42_b5b1b8bfd0d1",
     "logging_strategy": "steps",
     "logging_first_step": false,
     "logging_steps": 500,
@@ -131,7 +134,7 @@
     "push_to_hub_model_id": "None",
     "push_to_hub_organization": "None",
     "push_to_hub_token": "<PUSH_TO_HUB_TOKEN>",
-    "_n_gpu": 1,
+    "_n_gpu": 0,
     "mp_parameters": "",
     "sortish_sampler": false,
     "predict_with_generate": true,

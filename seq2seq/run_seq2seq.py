@@ -196,6 +196,13 @@ def main() -> None:
             "ignore_pad_token_for_loss": data_training_args.ignore_pad_token_for_loss,
             "target_with_db_id": data_training_args.target_with_db_id,
         }
+        #using spidertrainer as it is.
+        if data_args.dataset in ["spider", "spider_realistic", "spider_syn", "spider_dk"]:
+            trainer = SpiderTrainer(**trainer_kwargs)
+        elif data_args.dataset in ["cosql", "cosql+spider"]:
+            trainer = CoSQLTrainer(**trainer_kwargs)
+        else:
+            raise NotImplementedError()
 
         trainer = SpiderTrainer(**trainer_kwargs)
 
@@ -256,7 +263,7 @@ def main() -> None:
             try:
                 if isinstance(trainer, SpiderTrainer):
                     format_predictions(f"{training_args.output_dir}/predictions_eval_None.json")
-                    os.system(f"cd eval_spider && python evaluate.py --gold ../../dataset_files/ori_dataset/spider/dev_gold.sql --pred {training_args.output_dir}/predictions.sql --etype all --db ../../dataset_files/ori_dataset/spider/database --table ../../dataset_files/ori_dataset/spider/tables.json")
+                    os.system(f"cd seq2seq/eval_spider && python evaluate.py --gold ../../dataset_files/ori_dataset/spider/dev_gold.sql --pred {training_args.output_dir}/predictions.sql --etype all --db ../../dataset_files/ori_dataset/spider/database --table ../../dataset_files/ori_dataset/spider/tables.json")
             except Exception as e:
                 print(e)
                 print("The detailed evaluation threw an error, skipping.")

@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Spider-DK: Exploring Underexplored Limitations of Cross-Domain Text-to-SQL Generalization"""
+"""Spider-Realisitc: Spider Realistic Dataset for evaluating Text-SQL models"""
 
 import json
 from turtle import down
@@ -23,33 +23,31 @@ from typing import List, Generator, Any, Dict, Tuple
 logger = datasets.logging.get_logger(__name__)
 
 _CITATION = """
-@misc{gan2021exploring,
-      title={Exploring Underexplored Limitations of Cross-Domain Text-to-SQL Generalization}, 
-      author={Yujian Gan and Xinyun Chen and Matthew Purver},
-      year={2021},
-      eprint={2109.05157},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+@article{deng2020structure,
+  title={Structure-Grounded Pretraining for Text-to-SQL},
+  author={Deng, Xiang and Awadallah, Ahmed Hassan and Meek, Christopher and Polozov, Oleksandr and Sun, Huan and Richardson, Matthew},
+  journal={arXiv preprint arXiv:2010.12773},
+  year={2020}
 }
 """
 
 _DESCRIPTION = """\
-    Spider-DK new domain-data data for original spider dataset.
+    Spider-realistic: Original spider dev data modified to remove explicit mention of column names from utterance for better evaluation.
 """
 
-_HOMEPAGE = "https://github.com/ygan/Spider-DK"
+_HOMEPAGE = "https://zenodo.org/record/5205322#.Yh-B1uhByUl"
 
 _LICENCE = "CC BY-SA 4.0"
 
-_URL = "https://drive.google.com/uc?export=download&id=1yQ_mTwF4VzBB1_v5MB48odyXEGao2LrH&confirm=t"
+_URL = "https://drive.google.com/uc?id=1WlxXLFWpDSrCvCAIXDABSHQxIxXUdlp-&export=download"
 
-class SpiderDK(datasets.GeneratorBasedBuilder):
+class SpiderRealistic(datasets.GeneratorBasedBuilder):
     VERSION = datasets.Version("1.0.0")
 
     BUILDER_CONFIGS = [datasets.BuilderConfig(
-        name = "spider-dk",
+        name = "spider-realistic",
         version = VERSION,
-        description="Spider-DK: Original spider dev data modified for Exploring Underexplored Limitations of Cross-Domain Text-to-SQL Generalization"
+        description="Spider-realistic: Original spider dev data modified to remove explicit mention of column names from utterance for better evaluation."
     )]
 
 
@@ -63,7 +61,6 @@ class SpiderDK(datasets.GeneratorBasedBuilder):
             {
                 "query": datasets.Value("string"),
                 'question': datasets.Value('string'),
-                "db_description": datasets.Value("string"),
                 "db_id": datasets.Value("string"),
                 "db_path": datasets.Value("string"),
                 "db_table_names": datasets.features.Sequence(datasets.Value("string")),
@@ -101,8 +98,8 @@ class SpiderDK(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name = datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "data_filepaths":[downloaded_filepath + "/spider-dk/spider-DK.json"],
-                    "db_path": downloaded_filepath + "/spider-dk/database",
+                    "data_filepaths":[downloaded_filepath + "/spider-realistic/spider-realistic.json"],
+                    "db_path": downloaded_filepath + "/spider-realistic/database",
                 },
             ),
         ]
@@ -114,8 +111,8 @@ class SpiderDK(datasets.GeneratorBasedBuilder):
         for data_filepath in data_filepaths:
             logger.info("generating examples form = %s", data_filepath)
             with open(data_filepath, encoding='utf-8') as f:
-                spider_dk = json.load(f)
-                for idx, sample in enumerate(spider_dk):
+                spider_realistic = json.load(f)
+                for idx, sample in enumerate(spider_realistic):
                     db_id = sample['db_id']
                     if db_id not in self.schema_cache:
                         self.schema_cache[db_id] = dump_db_json_schema(
@@ -125,7 +122,6 @@ class SpiderDK(datasets.GeneratorBasedBuilder):
                     yield idx, {
                         "query": sample['query'],
                         "question": sample['question'],
-                        "db_description": sample["db_description"],
                         "db_id": db_id,
                         "db_path": db_path,
                         "db_table_names": schema["table_names_original"],
