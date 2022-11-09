@@ -268,6 +268,7 @@ def main() -> None:
                     pred = f"{training_args.output_dir}/predictions.sql"
                     db_dir = f"{training_args.output_dir}/../../dataset_files/ori_dataset/{data_args.dataset.replace('_', '-')}/database"
                     etype = "all"
+                    table = f"{training_args.output_dir}../../dataset_files/ori_dataset/spider/tables.json"
                     kmaps = build_foreign_key_map_from_json(table)
                     evaluate(gold, pred, db_dir, etype, kmaps)
             except Exception as e:
