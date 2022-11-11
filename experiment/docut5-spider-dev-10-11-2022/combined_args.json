@@ -83,7 +83,7 @@
     "log_level": -1,
     "log_level_replica": -1,
     "log_on_each_node": true,
-    "logging_dir": "./experiment/docut5-spider-dev-10-11-2022/runs/Nov10_19-37-25_3bf790022395",
+    "logging_dir": "./experiment/docut5-spider-dev-10-11-2022/runs/Nov11_10-59-17_3bf790022395",
     "logging_strategy": "steps",
     "logging_first_step": false,
     "logging_steps": 500,
