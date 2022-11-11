@@ -372,6 +372,27 @@ def serialize_schema(
     schema_serialization_with_db_description:bool = True,
     normalize_query: bool = True,
 ) -> str:
+    # Print parameters to check they have been passed in correctly
+    print()
+    print("Default params in dataset.py:")
+    print(f"schema_serialization_with_db_content = False")
+    print(f"schema_serialization_with_foreign_keys = False")
+    print(f"schema_serialization_with_db_description = True")
+    print()
+    print("Params passed into dataset.py:")
+    print(f"schema_serialization_with_db_content = {schema_serialization_with_db_content}")
+    print(f"schema_serialization_with_foreign_keys = {schema_serialization_with_foreign_keys}")
+    print(f"schema_serialization_with_db_description = {schema_serialization_with_db_description}")
+    print()
+    schema_serialization_with_db_content = True
+    schema_serialization_with_foreign_keys = False
+    schema_serialization_with_db_description = True
+    print("Params hardcoded in dataset.py:")
+    print(f"schema_serialization_with_db_content = {schema_serialization_with_db_content}")
+    print(f"schema_serialization_with_foreign_keys = {schema_serialization_with_foreign_keys}")
+    print(f"schema_serialization_with_db_description = {schema_serialization_with_db_description}")
+    print()
+
     pair1 = db_foreign_keys['column_id']
     pair2 = db_foreign_keys['other_column_id']
     foreign = {}
@@ -464,6 +485,7 @@ def serialize_schema(
         serialized_schema = table_sep.join(tables)
     if schema_serialization_with_db_description:
       serialized_schema += desc_sep + description
+    print('serializes: ' + serialized_schema)
     return serialized_schema
 
 
