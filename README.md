@@ -39,6 +39,11 @@ Alternatively, you can build the DocuT5 image from scratch. This is necessary if
 make build-eval-image
 ```
 
+Download the required datasets:
+```
+./download_datasets.sh
+```
+
 ### Training
 
 The training script is located in `seq2seq/run_seq2seq.py`.
@@ -76,11 +81,6 @@ docker start `docker ps -q -l` && docker attach `docker ps -q -l`
 ```
 
 ### Evaluation
-
-If you want a full evaluation of Spider, first run:
-```
-./download_datasets.sh
-```
 
 The evaluation script is located in `seq2seq/run_seq2seq.py`.
 
