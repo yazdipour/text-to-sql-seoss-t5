@@ -50,13 +50,13 @@ select min(weight) from pets
 select max(weight), pettype from pets group by pettype
 select max(weight), pettype from pets group by pettype
 select count(*) from student as t1 join has_pet as t2 on t1.stuid = t2.stuid where t1.age > 20
-select count(*) from student as t1 join has_pet as t2 on t1.stuid = t2.stuid where t1.age > 20
+select count(*) from has_pet as t1 join pets as t2 on t1.petid = t2.petid join student as t3 on t1.stuid = t3.stuid where t3.age > 20
 select count(*) from pets as t1 join has_pet as t2 on t1.petid = t2.petid join student as t3 on t2.stuid = t3.stuid where t3.sex = 'F' and t1.pettype = 'dog'
 select count(*) from pets as t1 join has_pet as t2 on t1.petid = t2.petid join student as t3 on t2.stuid = t3.stuid where t3.sex = 'F' and t1.pettype = 'dog'
 select count(distinct pettype) from pets
 select count(distinct pettype) from pets
 select t1.fname from student as t1 join has_pet as t2 on t1.stuid = t2.stuid join pets as t3 on t2.petid = t3.petid where t3.pettype = 'cat' or t3.pettype = 'dog'
-select t1.fname from student as t1 join has_pet as t2 on t1.stuid = t2.stuid join pets as t3 on t2.petid = t3.petid where t3.pettype = 'cat' or t3.pettype = 'dog'
+select distinct t1.fname from student as t1 join has_pet as t2 on t1.stuid = t2.stuid join pets as t3 on t2.petid = t3.petid where t3.pettype = 'cat' or t3.pettype = 'dog'
 select t1.fname from student as t1 join has_pet as t2 on t1.stuid = t2.stuid join pets as t3 on t2.petid = t3.petid where t3.pettype = 'cat' intersect select t1.fname from student as t1 join has_pet as t2 on t1.stuid = t2.stuid join pets as t3 on t2.petid = t3.petid where t3.pettype = 'dog'
 select t1.fname from student as t1 join has_pet as t2 on t1.stuid = t2.stuid join pets as t3 on t2.petid = t3.petid where t3.pettype = 'cat' intersect select t1.fname from student as t1 join has_pet as t2 on t1.stuid = t2.stuid join pets as t3 on t2.petid = t3.petid where t3.pettype = 'dog'
 select major, age from student except select t1.major, t1.age from student as t1 join has_pet as t2 on t1.stuid = t2.stuid join pets as t3 on t2.petid = t3.petid where t3.pettype = 'cat'
@@ -149,7 +149,7 @@ select count(*) from car_makers as t1 join model_list as t2 on t1.id = t2.maker 
 select count(*) from car_makers as t1 join model_list as t2 on t1.id = t2.maker where t1.fullname = "American motor Company"
 select t2.fullname, t1.maker from model_list as t1 join car_makers as t2 on t1.maker = t2.id group by t1.maker having count(*) > 3
 select t1.fullname, t1.maker from car_makers as t1 join model_list as t2 on t1.id = t2.maker group by t1.maker having count(*) > 3
-select distinct t1.model from model_list as t1 join car_makers as t2 on t1.maker = t2.id where t2.fullname = 'General Motors' or t1.we
+select distinct model from model_list as t1 join car_makers as t2 on t1.maker = t2.id where t2.fullname = 'General Motors' or t1.we
 select distinct model from model_list as t1 join car_makers as t2 on t1.maker = t2.id where t2.fullname = "General Motors" union select distinct model from model_list as t1 join cars_data as t2 on t1.model = t2.id where t2.weight > 3500
 select year from cars_data where weight Between 3000 and 4000
 select distinct year from cars_data where weight < 4000 intersect select distinct year from cars_data where weight > 3000
@@ -213,7 +213,7 @@ select count(*) from flights where sourceairport = 'Aberdeen' and destairport = 
 select count(*) from flights where sourceairport = "Aberdeen" and destairport = "Ashley"
 select count(*) from airlines as t1 join flights as t2 on t1.uid = t2.airline where t1.airline = 'JetBlue Airways'
 select count(*) from airlines as t1 join flights as t2 on t1.uid = t2.airline where t1.airline = "JetBlue Airways"
-flight_
+select count(*) from airlines as t1 join flights as t2 on t1.uid = t2.airline join airports as t3 on t2.sourceairport = t3.airport
 select count(*) from airlines as t1 join flights as t2 on t1.uid = t2.airline where destairport = (select t2.sourceairport from flights as t3 join airports as t4 on t3.sourceairport = t4.airportcode where t4.airportcode = "ASY") and t1.airline = "United Airlines"
 select count(*) from flights where airline = 'United Airlines' and sourceairport = 'AHD'
 select count(*) from airlines as t1 join flights as t2 on t1.uid = t2.airline where t2.sourceairport = "AHD" and t2.airline = "United Airlines"
@@ -325,7 +325,7 @@ select template_id from templates where template_type_code = "PP" or template_ty
 select template_id from templates where template_type_code = "PP" or template_type_code = "PPT"
 select count(*) from templates where template_type_code = "CV"
 select count(*) from templates where template_type_code = "CV"
-select t1.version_number, t1.template_type_code from templates as t1 join ref_template_types as t2 on t1.template_type_code = t2.template_type_code where t1.version_number > 5
+select version_number, template_type_code from templates where version_number > 5
 select version_number, template_type_code from templates where version_number > 5
 select template_type_code, count(*) from templates group by template_type_code
 select template_type_code, count(*) from templates group by template_type_code
@@ -572,13 +572,13 @@ select transcript_date from transcripts order by transcript_date desc limit 1
 select count(*), t1.course_id from student_enrolment_courses as t1 join transcript_contents as t2 on t1.course_id = t2.student_course_id group by t1.course_id
 select t1.course_id, count(*) from courses as t1 join transcript_contents as t2 on t1.course_id = t2.course_id
 select transcript_date, transcript_id from transcripts group by transcript_id order by count(*) asc limit 1
-select transcript_date, transcript_id from transcripts group by transcript_id order by count(*) asc limit 1
+select t1.transcript_date, t1.transcript_id from transcripts as t1 join transcript_contents as t2 on t1.transcript_id = t2.transcript_id group by t1.transcript_id order by count(*) asc limit 1
 select t1.semester_name from semesters as t1 join student_enrolment as t2 on t1.semester_id = t2.semester_id join degree_programs as t3 on t2.degree_program_id = t3.degree_program_id where t3.degree_summary_name = 'Master' intersect select t1.se
 select semester_id from student_enrolment where degree_program_id = "Masters" intersect select semester_id from student_enrolment where degree_program_id = "Bachelors"
 select count(distinct current_address_id) from students
 select distinct t1.other_address_details from addresses as t1 join students as t2 on t1.address_id = t2.current_address_id
 select other_student_details from students order by other_student_details desc
-select other_student_details from students order by other_student_details desc
+student
 select t1.section_description from sections as t1 join addresses as t2 on t1.section_id = t2.address_id where t1.section_name = 'h'
 select section_description from sections where section_name = "h"
 select t1.first_name from students as t1 join addresses as t2 on t1.permanent_address_id = t2.address_id where t2.country = "Haiti" or t1.cell_mobile_number = "09700166582"
@@ -817,9 +817,9 @@ select language from countrylanguage group by language order by count(*) desc li
 select language, percentage from countrylanguage group by language order by percentage desc limit 1
 select countrycode, language from countrylanguage group by countrycode order by percentage desc limit 1
 select count(*) from countrylanguage where language = 'Spanish' group by countrycode order by percentage desc limit 1
-world
+select count(*) from countrylanguage where language = 'Spanish' group by countrycode
 select countrycode from countrylanguage where language = 'Spanish' group by countrycode order by percentage desc limit 1
-world
+select countrycode from countrylanguage where language = 'Spanish' group by countrycode having count(*) > 100
 select count(*) from conductor
 select count(*) from conductor
 select name from conductor order by age asc
@@ -885,7 +885,7 @@ select count(*), student_id from friend group by student_id
 select t1.name, count(*) from highschooler as t1 join friend as t2 on t1.id = t2.friend_id group by t2.friend_id
 select count(*), t1.name from highschooler as t1 join friend as t2 on t1.id = t2.friend_id group by t1.name
 select t1.name from highschooler as t1 join friend as t2 on t1.id = t2.friend_id group by t2.friend_id order by count(*) desc limit 1
-select t1.name from highschooler as t1 join friend as t2 on t1.id = t2.friend_id group by t2.friend_id order by count(*) desc limit 1
+network
 select t1.name from highschooler as t1 join friend as t2 on t1.id = t2.friend_id group by t2.friend_id having count(*) >= 3
 select t1.name from highschooler as t1 join friend as t2 on t1.id = t2.friend_id group by t2.friend_id having count(*) >= 3
 select t3.name from highschooler as t1 join friend as t2 on t1.id = t2.friend_id join highschooler as t3 on t2.student_id = t3.id where t1.name = "Kyle"
