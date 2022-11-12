@@ -26,7 +26,7 @@ import sqlite3
 import traceback
 import argparse
 
-from seq2seq.eval_spider.process_sql import tokenize, get_schema, get_tables_with_alias, Schema, get_sql
+from process_sql import tokenize, get_schema, get_tables_with_alias, Schema, get_sql
 
 # Flag to disable value evaluation
 DISABLE_VALUE = True
@@ -498,7 +498,7 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
             scores[level]['partial'][type_] = {'acc': 0., 'rec': 0., 'f1': 0.,'acc_count':0,'rec_count':0}
 
     eval_err_num = 0
-    for p, g in zip(plist, glist):
+    for index, (p, g) in enumerate(zip(plist, glist)):
         p_str = p[0]
         g_str, db = g
         db_name = db
@@ -552,9 +552,9 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
         if etype in ["all", "match"]:
             exact_score = evaluator.eval_exact_match(p_sql, g_sql)
             partial_scores = evaluator.partial_scores
-            if exact_score == 0:
-                print("{} pred: {}".format(hardness,p_str))
-                print("{} gold: {}".format(hardness,g_str))
+            if exact_score == 0 or True: # print all queries
+                print("{} {} pred: {}".format(index, hardness,p_str))
+                print("{} {} gold: {}".format(index, hardness,g_str))
                 print("")
             scores[hardness]['exact'] += exact_score
             scores['all']['exact'] += exact_score
