@@ -33,8 +33,6 @@ from seq2seq.utils.cosql import CoSQLTrainer
 
 from seq2seq.eval_spider.format_predictions import format_predictions
 
-huggingface_username = "totem37"
-
 def main() -> None:
     # See all possible arguments by passing the --help flag to this script.
     parser = HfArgumentParser(
@@ -179,11 +177,6 @@ def main() -> None:
                 f"`{model.__class__.__name__}`. This will lead to loss being calculated twice and will take up more memory"
             )
 
-        if model_args.huggingface_model_name and not training_args.push_to_hub:
-            logger.warning("huggingface_model_name is set but push_to_hub is not. The model will not be pushed to HuggingFace.")
-        elif training_args.push_to_hub and not model_args.huggingface_model_name:
-            logger.warning("push_to_hub is set but huggingface_model_name is not. The model will not be pushed to HuggingFace.")
-
         # Initialize Trainer
         trainer_kwargs = {
             "model": model,
@@ -233,12 +226,6 @@ def main() -> None:
             #train_result = trainer.train(resume_from_checkpoint=checkpoint)
             train_result = None
             trainer.save_model()  # Saves the tokenizer too for easy upload
-            if training_args.push_to_hub:
-                try:
-                    trainer.push_to_hub(f"{huggingface_username}/{model_args.huggingface_model_name}")
-                except Exception as e:
-                    print("The following exception occurred while pushing model to HuggingFace, skipping.")
-                    print(e)
 
             metrics = train_result.metrics
             max_train_samples = (

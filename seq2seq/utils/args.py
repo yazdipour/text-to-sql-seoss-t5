@@ -37,7 +37,3 @@ class ModelArguments:
             "with private models)."
         },
     )
-    huggingface_model_name: Optional[str] = field(
-        default=None,
-        metadata={"help": "The name of the model to save to HuggingFace."},
-    )
