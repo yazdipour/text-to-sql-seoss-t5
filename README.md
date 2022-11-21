@@ -80,6 +80,26 @@ To re-enter the last exited Docker container run:
 docker start `docker ps -q -l` && docker attach `docker ps -q -l`
 ```
 
+## Upload Trained Model to HuggingFace
+
+To upload a new trained model to HuggingFace, execute the following commands _before_ training (note that MODEL_NAME should be the same as the subdirectory of train specified in the output_dir argument in the training config):
+```
+huggingface-cli login
+apt install git-lfs
+cd train
+git lfs install
+huggingface-cli repo create [MODEL_NAME]
+git clone https://huggingface.co/[HUGGINGFACE_USERNAME]/[MODEL_NAME]
+huggingface-cli lfs-enable-largefiles [MODEL_NAME]
+```
+
+To push changes to an existing HuggingFace model repository, run the following commands after training:
+```
+huggingface-cli login
+cd train
+python push.py [MODEL_NAME]
+```
+
 ### Evaluation
 
 The evaluation script is located in `seq2seq/run_seq2seq.py`.

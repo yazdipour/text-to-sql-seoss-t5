@@ -223,8 +223,7 @@ def main() -> None:
             elif last_checkpoint is not None:
                 checkpoint = last_checkpoint
 
-            #train_result = trainer.train(resume_from_checkpoint=checkpoint)
-            train_result = None
+            train_result = trainer.train(resume_from_checkpoint=checkpoint)
             trainer.save_model()  # Saves the tokenizer too for easy upload
 
             metrics = train_result.metrics
