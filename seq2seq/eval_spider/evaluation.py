@@ -491,6 +491,8 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
     entries = []
     scores = {}
 
+    failures = []
+
     for level in levels:
         scores[level] = {'count': 0, 'partial': {}, 'exact': 0.}
         scores[level]['exec'] = 0
@@ -552,10 +554,18 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
         if etype in ["all", "match"]:
             exact_score = evaluator.eval_exact_match(p_sql, g_sql)
             partial_scores = evaluator.partial_scores
-            if exact_score == 0 or True: # print all queries
-                print("{} {} pred: {}".format(index, hardness,p_str))
-                print("{} {} gold: {}".format(index, hardness,g_str))
-                print("")
+            
+            # log failures
+            if exact_score == 0: 
+                failures.append(p_str + "\t [FAILURE]")
+            else:
+                failures.append(p_str)
+
+            # print all queries
+            print("{} {} pred: {}".format(index, hardness,p_str))
+            print("{} {} gold: {}".format(index, hardness,g_str))
+            print("")
+
             scores[hardness]['exact'] += exact_score
             scores['all']['exact'] += exact_score
             for type_ in partial_types:
@@ -581,6 +591,10 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
                 'exact': exact_score,
                 'partial': partial_scores
             })
+
+    # Write predicted queries and their result to a file
+    with open(os.path.join(os.path.dirname(predict), 'failures.txt'), 'w') as f:
+        f.write('\n'.join(failures))
 
     for level in levels:
         if scores[level]['count'] == 0:
@@ -624,8 +638,11 @@ def eval_exec_match(db, p_str, g_str, pred, gold):
     except:
         return False
 
-    cursor.execute(g_str)
-    q_res = cursor.fetchall()
+    try:
+        cursor.execute(g_str)
+        q_res = cursor.fetchall()
+    except:
+        return False
 
     def res_map(res, val_units):
         rmap = {}
