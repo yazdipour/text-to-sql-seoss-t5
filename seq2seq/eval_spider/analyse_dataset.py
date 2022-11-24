@@ -1,4 +1,4 @@
-from evaluation import *
+from evaluation import eval_hardness, AGG_OPS
 
 import json
 import os
@@ -9,12 +9,45 @@ def form_clause_str(sql_dict, delimiter='|'):
     """
     Given a dictionary of SQL clauses, form a string encoding them
     """
+    ##############################
+    # 
+    # select: is distinct, aggregation
+    # from
+    # where: has and/or, has join, aggregation, has nested
+    # groupBy
+    # orderBy: is asc/desc
+    # having: has and/or, has join, aggregation, has nested
+    # limit
+    # intersect
+    # except
+    # union
+    # 
+    ##############################
+    clause_str = ""
+
+    # select clause
+    select = sql_dict.get('select')
+    clause_str += "SELECT "
+    if select[0]:
+        clause_str += "DISTINCT "
+    for unit in select[1]:
+        if unit[0] != 0:
+            clause_str += AGG_OPS[unit[0]] + " "
+
+    # from clause
+    clause_str += "FROM "
+
+    # where clause
+
+
+    return clause_str
 
 
 def analyse_dataset(dataset_name):
     """
     Prints statistics on the gold queries for a given dataset
     """
+    delimiter = '|'
     query_data = []
 
     dataset_file = f"../../dataset_files/ori_dataset/{dataset_name}/"
@@ -30,10 +63,10 @@ def analyse_dataset(dataset_name):
 
             # Append statistics to a string
             instance_str += i['query']
-            instance_str += " | "
+            instance_str += f" {delimiter} "
             instance_str += eval_hardness(i['query'])
-            instance_str += " | "
-            instance_str += form_clause_str(i['sql'])
+            instance_str += " {delimiter} "
+            instance_str += form_clause_str(i['sql'], delimiter)
 
             query_data.append(instance_str)
 
