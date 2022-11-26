@@ -168,6 +168,10 @@ def main() -> None:
             revision=model_args.model_revision,
             use_auth_token=True if model_args.use_auth_token else None,
         )
+        try:
+            model.parallelize()
+        except:
+            pass
         if isinstance(model, T5ForConditionalGeneration):
             model.resize_token_embeddings(len(tokenizer))
 

@@ -40,13 +40,14 @@ train:
 		mkdir -p -m 777 transformers_cache
 		mkdir -p -m 777 wandb
 		docker run \
-    			-it --gpus=all --user root -p 8000:8000 \
+    			-it --gpus all --user root -p 8000:8000 \
 			--runtime=nvidia -e NVIDIA_DRIVER_CAPABILITIES=compute,utility -e NVIDIA_VISIBLE_DEVICES=all \
 			--mount type=bind,source=$(BASE_DIR)/train,target=/app/train \
 			--mount type=bind,source=$(BASE_DIR)/wandb,target=/app/wandb \
 			--mount type=bind,source=$(BASE_DIR)/transformers_cache,target=/transformers_cache  \
 			--mount type=bind,source=$(BASE_DIR)/configs,target=/app/configs \
 			--mount type=bind,source=$(BASE_DIR)/seq2seq,target=/app/seq2seq \
+			--mount type=bind,source=$(BASE_DIR)/eval,target=/eval \
 			$(IMAGE_NAME):$(IMAGE_TAG) \
 	       		# /bin/bash -c "python seq2seq/run_seq2seq.py configs/train.json"
 
