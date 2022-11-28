@@ -22,6 +22,8 @@ class Seq2SeqTrainer(transformers.trainer_seq2seq.Seq2SeqTrainer):
         eval_examples: Optional[Dataset] = None,
         ignore_pad_token_for_loss: bool = True,
         target_with_db_id: bool = False,
+        should_save: bool = False,
+        push_to_hub: bool = False,
         **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
@@ -30,6 +32,8 @@ class Seq2SeqTrainer(transformers.trainer_seq2seq.Seq2SeqTrainer):
         self.compute_metrics = self._compute_metrics
         self.ignore_pad_token_for_loss = ignore_pad_token_for_loss
         self.target_with_db_id = target_with_db_id
+        self.control.should_save = should_save
+        self.push_to_hub = push_to_hub
 
     def _compute_metrics(self, eval_prediction: EvalPrediction) -> dict:
         raise NotImplementedError()
