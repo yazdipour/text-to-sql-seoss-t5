@@ -12,11 +12,11 @@ def form_clause_str(sql_dict, delimiter='|'):
     ##############################
     # 
     # select: is distinct, aggregation
-    # from
-    # where: has and/or, has join, aggregation, has nested
+    # from: has join
+    # where: has and/or, aggregation, has nested subquery
     # groupBy
     # orderBy: is asc/desc
-    # having: has and/or, has join, aggregation, has nested
+    # having: has and/or, has join, aggregation, has nested subquery
     # limit
     # intersect
     # except
@@ -26,19 +26,38 @@ def form_clause_str(sql_dict, delimiter='|'):
     clause_str = ""
 
     # select clause
-    select = sql_dict.get('select')
     clause_str += "SELECT "
+    select = sql_dict.get('select')
     if select[0]:
         clause_str += "DISTINCT "
     for unit in select[1]:
         if unit[0] != 0:
             clause_str += AGG_OPS[unit[0]] + " "
+    clause_str += delimiter
 
     # from clause
     clause_str += "FROM "
+    from = sql_dict.get('from')
+    if len(from.get('table_units')) > 1:
+        clause_str += "JOIN "
+    clause_str += delimiter
 
     # where clause
-
+    clause_str += "WHERE "
+    where = sql_dict.get('where')
+    if 'and' in where:
+        clause_str += "AND "
+    if 'or' in where:
+        clause_str += "OR "
+    for unit in where:
+        if unit[2][1][0] != 0:
+            clause_str += AGG_OPS[unit[2][1][0]] + " "
+        if unit[2][2][0] != 0:
+            clause_str += AGG_OPS[unit[2][2][0]] + " "
+    for unit in where:
+        if type(unit[3]) == dict or type(unit[4]) == dict:
+            clause_str += "SUBQUERY "
+    clause_str += delimiter
 
     return clause_str
 
