@@ -57,6 +57,7 @@ def form_clause_str(sql_dict, delimiter='|'):
     for unit in where:
         if type(unit[3]) == dict or type(unit[4]) == dict:
             clause_str += "SUBQUERY "
+            break
     clause_str += delimiter
 
     return clause_str
