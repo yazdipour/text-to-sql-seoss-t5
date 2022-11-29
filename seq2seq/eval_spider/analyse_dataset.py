@@ -1,8 +1,28 @@
-from evaluation import eval_hardness, AGG_OPS
+from evaluation import count_component1, count_component2, count_others
 
 import json
 import os
 import sys
+
+AGG_OPS = ('none', 'max', 'min', 'count', 'sum', 'avg')
+
+
+def eval_hardness(sql):
+    count_comp1_ = count_component1(sql)
+    count_comp2_ = count_component2(sql)
+    count_others_ = count_others(sql)
+
+    if count_comp1_ <= 1 and count_others_ == 0 and count_comp2_ == 0:
+        return "easy"
+    elif (count_others_ <= 2 and count_comp1_ <= 1 and count_comp2_ == 0) or \
+            (count_comp1_ <= 2 and count_others_ < 2 and count_comp2_ == 0):
+        return "medium"
+    elif (count_others_ > 2 and count_comp1_ <= 2 and count_comp2_ == 0) or \
+            (2 < count_comp1_ <= 3 and count_others_ <= 2 and count_comp2_ == 0) or \
+            (count_comp1_ <= 1 and count_others_ == 0 and count_comp2_ <= 1):
+        return "hard"
+    else:
+        return "extra"
 
 
 def form_clause_str(sql_dict, delimiter='|'):
@@ -13,7 +33,7 @@ def form_clause_str(sql_dict, delimiter='|'):
     # 
     # select: is distinct, aggregation
     # from: has join
-    # where: has and/or, aggregation, has nested subquery
+    # where: has and/or, has nested subquery
     # groupBy
     # having: has and/or, aggregation, has nested subquery
     # orderBy: is asc/desc
@@ -36,9 +56,8 @@ def form_clause_str(sql_dict, delimiter='|'):
     clause_str += delimiter
 
     # from clause
-    from = sql_dict.get('from')
     clause_str += "FROM "
-    if len(from.get('table_units')) > 1:
+    if len(sql_dict.get('from').get('table_units')) > 1:
         clause_str += "JOIN "
     clause_str += delimiter
 
@@ -51,14 +70,10 @@ def form_clause_str(sql_dict, delimiter='|'):
         if 'or' in where:
             clause_str += "OR "
         for unit in where:
-            if unit[2][1][0] != 0:
-                clause_str += AGG_OPS[unit[2][1][0]] + " "
-            if unit[2][2][0] != 0:
-                clause_str += AGG_OPS[unit[2][2][0]] + " "
-        for unit in where:
-            if type(unit[3]) == dict or type(unit[4]) == dict:
-                clause_str += "SUBQUERY "
-                break
+            if type(unit) != str:
+                if type(unit[3]) == dict or type(unit[4]) == dict:
+                    clause_str += "SUBQUERY "
+                    break
     clause_str += delimiter
     
     # group by clause
@@ -70,19 +85,22 @@ def form_clause_str(sql_dict, delimiter='|'):
     # having clause
     having = sql_dict.get('having')
     if having:
+        clause_str += "HAVING "
         if 'and' in having:
             clause_str += "AND "
         if 'or' in having:
             clause_str += "OR "
         for unit in having:
-            if unit[2][1][0] != 0:
-                clause_str += AGG_OPS[unit[2][1][0]] + " "
-            if unit[2][2][0] != 0:
-                clause_str += AGG_OPS[unit[2][2][0]] + " "
+            if type(unit) != str:
+                if unit[2][1][0] != 0:
+                    clause_str += AGG_OPS[unit[2][1][0]] + " "
+                if unit[2][2] and unit[2][2][0] != 0:
+                    clause_str += AGG_OPS[unit[2][2][0]] + " "
         for unit in having:
-            if type(unit[3]) == dict or type(unit[4]) == dict:
-                clause_str += "SUBQUERY "
-                break
+            if type(unit) != str:
+                if type(unit[3]) == dict or type(unit[4]) == dict:
+                    clause_str += "SUBQUERY "
+                    break
     clause_str += delimiter
     
     # order by clause
@@ -130,28 +148,30 @@ def analyse_dataset(dataset_name):
         dataset_file += "dev.json"
 
     with open(dataset_file, 'r') as input_file:
-        instances = json.loads(input_file.read())
+        instances = json.load(input_file)
         for i in instances:
             instance_str = ""
 
             # Append statistics to a string
             instance_str += i['query']
             instance_str += f" {delimiter} "
-            instance_str += eval_hardness(i['query'])
-            instance_str += " {delimiter} "
+            instance_str += eval_hardness(i['sql'])
+            instance_str += f" {delimiter} "
             instance_str += form_clause_str(i['sql'], delimiter)
 
             query_data.append(instance_str)
 
-    out_filename = "../../dataset_files/statistics/{dataset_name}.txt"
+    out_filename = f"../../dataset_files/statistics/{dataset_name}.txt"
 
     with open(out_filename, 'w') as output_file:
         for q in query_data:
             output_file.write(q + '\n')
 
+    print(f"Wrote result to {out_filename}")
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("analyse_dataset() takes 1 argument: the dataset name, e.g. spider_dk")
+        print("analyse_dataset() takes 1 argument: the dataset name, e.g. spider")
     else:
         dataset_name = sys.argv[1]
         analyse_dataset(dataset_name)

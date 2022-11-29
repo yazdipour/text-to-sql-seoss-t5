@@ -5,6 +5,7 @@ pip install gdown
 
 mkdir -p dataset_files/ori_dataset
 cd dataset_files
+mkdir statistics
 gdown 1_AckYkinAnhqmRQtGsQgUKAnTHxxX5J0
 gdown 1yQ_mTwF4VzBB1_v5MB48odyXEGao2LrH
 gdown 1XZHXCHiA3qYRsHjF68oo5gtzU_gbGMjo
