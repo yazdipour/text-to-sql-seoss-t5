@@ -557,7 +557,7 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
             
             # log failures
             if exact_score == 0: 
-                failures.append(p_str + "\t [FAILURE]")
+                failures.append(p_str + " _FAILURE")
             else:
                 failures.append(p_str)
 
