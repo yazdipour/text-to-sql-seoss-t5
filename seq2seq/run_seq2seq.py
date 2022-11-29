@@ -31,7 +31,10 @@ from seq2seq.utils.dataset_loader import load_dataset
 from seq2seq.utils.spider import SpiderTrainer
 from seq2seq.utils.cosql import CoSQLTrainer
 
+import torch
 from seq2seq.eval_spider.format_predictions import format_predictions
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def main() -> None:
     # See all possible arguments by passing the --help flag to this script.
@@ -169,9 +172,12 @@ def main() -> None:
             use_auth_token=True if model_args.use_auth_token else None,
         )
         try:
-            model.parallelize()
-        except:
-            pass
+            model = torch.nn.DataParallel(model)
+            model.to(device)
+            #model.parallelize()
+        except Exception as e:
+            print("The following error was thrown when parallelising the model:")
+            print(e)
         if isinstance(model, T5ForConditionalGeneration):
             model.resize_token_embeddings(len(tokenizer))
 
