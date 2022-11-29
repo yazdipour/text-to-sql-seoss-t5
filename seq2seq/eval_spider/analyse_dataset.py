@@ -12,15 +12,15 @@ def form_clause_str(sql_dict, delimiter='|'):
     ##############################
     # 
     # select: is distinct, aggregation
-    # from
-    # where: has and/or, has join, aggregation, has nested
+    # from: has join
+    # where: has and/or, aggregation, has nested subquery
     # groupBy
+    # having: has and/or, aggregation, has nested subquery
     # orderBy: is asc/desc
-    # having: has and/or, has join, aggregation, has nested
     # limit
+    # union
     # intersect
     # except
-    # union
     # 
     ##############################
     clause_str = ""
@@ -33,12 +33,85 @@ def form_clause_str(sql_dict, delimiter='|'):
     for unit in select[1]:
         if unit[0] != 0:
             clause_str += AGG_OPS[unit[0]] + " "
+    clause_str += delimiter
 
     # from clause
+    from = sql_dict.get('from')
     clause_str += "FROM "
+    if len(from.get('table_units')) > 1:
+        clause_str += "JOIN "
+    clause_str += delimiter
 
     # where clause
-
+    where = sql_dict.get('where')
+    if where:
+        clause_str += "WHERE "
+        if 'and' in where:
+            clause_str += "AND "
+        if 'or' in where:
+            clause_str += "OR "
+        for unit in where:
+            if unit[2][1][0] != 0:
+                clause_str += AGG_OPS[unit[2][1][0]] + " "
+            if unit[2][2][0] != 0:
+                clause_str += AGG_OPS[unit[2][2][0]] + " "
+        for unit in where:
+            if type(unit[3]) == dict or type(unit[4]) == dict:
+                clause_str += "SUBQUERY "
+                break
+    clause_str += delimiter
+    
+    # group by clause
+    group_by = sql_dict.get('groupBy')
+    if group_by:
+        clause_str += "GROUP BY "
+    clause_str += delimiter
+    
+    # having clause
+    having = sql_dict.get('having')
+    if having:
+        if 'and' in having:
+            clause_str += "AND "
+        if 'or' in having:
+            clause_str += "OR "
+        for unit in having:
+            if unit[2][1][0] != 0:
+                clause_str += AGG_OPS[unit[2][1][0]] + " "
+            if unit[2][2][0] != 0:
+                clause_str += AGG_OPS[unit[2][2][0]] + " "
+        for unit in having:
+            if type(unit[3]) == dict or type(unit[4]) == dict:
+                clause_str += "SUBQUERY "
+                break
+    clause_str += delimiter
+    
+    # order by clause
+    order_by = sql_dict.get('orderBy')
+    if order_by:
+        clause_str += "ORDER BY " + order_by[0] + " "
+    clause_str += delimiter
+    
+    # limit clause
+    limit = sql_dict.get('limit')
+    if limit:
+        clause_str += "LIMIT " + str(limit) + " "
+    clause_str += delimiter
+    
+    # union clause
+    union = sql_dict.get('union')
+    if union:
+        clause_str += "UNION "
+    clause_str += delimiter
+    
+    # intersect clause
+    intersect = sql_dict.get('intersect')
+    if intersect:
+        clause_str += "INTERSECT "
+    clause_str += delimiter
+    
+    # except clause
+    if sql_dict.get('except'):
+        clause_str += "EXCEPT "
 
     return clause_str
 
