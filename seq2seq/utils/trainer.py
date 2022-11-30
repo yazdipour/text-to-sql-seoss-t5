@@ -2,7 +2,7 @@ import collections
 import torch
 from torch import nn
 from torch.cuda.amp import autocast
-from typing import Any, Dict, List, Optional, NamedTuple, Union
+from typing import Any, Dict, List, Optional, NamedTuple, Tuple, Union
 import transformers.trainer_seq2seq
 from transformers.modeling_utils import unwrap_model
 from transformers.trainer_utils import PredictionOutput, speed_metrics
@@ -181,7 +181,7 @@ class Seq2SeqTrainer(transformers.trainer_seq2seq.Seq2SeqTrainer):
 
         return output
 
-   def prediction_step(
+    def prediction_step(
         self,
         model: nn.Module,
         inputs: Dict[str, Union[torch.Tensor, Any]],
