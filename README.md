@@ -29,6 +29,11 @@ cd docu-t5
 ./install_docker.sh
 ```
 
+Download the required datasets:
+```
+./download_datasets.sh
+```
+
 Pull the DocuT5 Docker image with:
 ```
 make pull-eval-image
@@ -37,11 +42,6 @@ make pull-eval-image
 Alternatively, you can build the DocuT5 image from scratch. This is necessary if changes have been made to the model. To do this run:
 ```
 make build-eval-image
-```
-
-Download the required datasets:
-```
-./download_datasets.sh
 ```
 
 ### Training
