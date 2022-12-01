@@ -1,3 +1,5 @@
+from seq2seq.eval_spider.process_sql import get_schema, get_sql, Schema
+
 import json
 import os
 
@@ -18,6 +20,25 @@ def format_gold(json_filename):
         for q in gold_queries:
             output_file.write(q + '\n')
 
+def format_sql_field(json_filename, db_dir):
+    """
+    Creates a 'sql' field in the given .json file
+    """
+    with open(json_filename, 'r') as input_file:
+        all_instances = json.loads(input_file.read())
+    
+    for i in all_instances:
+        db = os.path.join(db_dir, i['db_id'], i['db_id'] + ".sqlite")
+        schema = Schema(get_schema(db))
+        if not i.get('sql'):
+            i['sql'] = get_sql(schema, i['query'])
+
+    with open(json_filename, 'w') as output_file:
+        output_file.write(json.dumps(all_instances))
+
 if __name__ == "__main__":
-    format_gold("dataset_files/ori_dataset/spider_dk/spider-DK.json")
+    json_filename = "dataset_files/ori_dataset/spider_dk/spider-DK.json"
+    db_dir = "dataset_files/ori_dataset/spider_dk/database"
+    format_sql_field(json_filename, db_dir)
+    format_gold(json_filename)
 
