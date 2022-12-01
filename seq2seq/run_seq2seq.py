@@ -35,6 +35,7 @@ import torch
 from seq2seq.eval_spider.format_predictions import format_predictions
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+torch.distributed.init_process_group(backend='nccl')
 
 def main() -> None:
     # See all possible arguments by passing the --help flag to this script.
