@@ -32,7 +32,9 @@ def form_clause_str(sql_dict, delimiter='|'):
     ##############################
     # 
     # select: is distinct, aggregation
-    # from: has join
+    # from
+    # from: no. tables
+    # from: no. joins
     # where: has and/or, has nested subquery
     # groupBy
     # having: has and/or, aggregation, has nested subquery
@@ -44,10 +46,12 @@ def form_clause_str(sql_dict, delimiter='|'):
     # 
     ##############################
     clause_str = ""
+    no_clauses = 0
 
     # select clause
     select = sql_dict.get('select')
     clause_str += "SELECT "
+    no_clauses += 1
     if select[0]:
         clause_str += "DISTINCT "
     for unit in select[1]:
@@ -56,15 +60,24 @@ def form_clause_str(sql_dict, delimiter='|'):
     clause_str += delimiter
 
     # from clause
+    from_clause = sql_dict.get('from')
     clause_str += "FROM "
-    if len(sql_dict.get('from').get('table_units')) > 1:
-        clause_str += "JOIN "
+    no_clauses += 1
+    clause_str += delimiter
+
+    # number of tables in from clause
+    clause_str += str(len(from_clause.get('table_units', [])))
+    clause_str += delimiter
+
+    # number of joins in from clause
+    clause_str += str(len(from_clause.get('conds', [])))
     clause_str += delimiter
 
     # where clause
     where = sql_dict.get('where')
     if where:
         clause_str += "WHERE "
+        no_clauses += 1
         if 'and' in where:
             clause_str += "AND "
         if 'or' in where:
@@ -80,12 +93,14 @@ def form_clause_str(sql_dict, delimiter='|'):
     group_by = sql_dict.get('groupBy')
     if group_by:
         clause_str += "GROUP BY "
+        no_clauses += 1
     clause_str += delimiter
     
     # having clause
     having = sql_dict.get('having')
     if having:
         clause_str += "HAVING "
+        no_clauses += 1
         if 'and' in having:
             clause_str += "AND "
         if 'or' in having:
@@ -107,29 +122,38 @@ def form_clause_str(sql_dict, delimiter='|'):
     order_by = sql_dict.get('orderBy')
     if order_by:
         clause_str += "ORDER BY " + order_by[0] + " "
+        no_clauses += 1
     clause_str += delimiter
     
     # limit clause
     limit = sql_dict.get('limit')
     if limit:
         clause_str += "LIMIT " + str(limit) + " "
+        no_clauses += 1
     clause_str += delimiter
     
     # union clause
     union = sql_dict.get('union')
     if union:
         clause_str += "UNION "
+        no_clauses += 1
     clause_str += delimiter
     
     # intersect clause
     intersect = sql_dict.get('intersect')
     if intersect:
         clause_str += "INTERSECT "
+        no_clauses += 1
     clause_str += delimiter
     
     # except clause
     if sql_dict.get('except'):
         clause_str += "EXCEPT "
+        no_clauses += 1
+    clause_str += delimiter
+
+    # number of clauses
+    clause_str += str(no_clauses)
 
     return clause_str
 
@@ -154,6 +178,8 @@ def analyse_dataset(dataset_name):
 
             # Append statistics to a string
             instance_str += i['query']
+            instance_str += f" {delimiter} "
+            instance_str += i['question']
             instance_str += f" {delimiter} "
             instance_str += eval_hardness(i['sql'])
             instance_str += f" {delimiter} "

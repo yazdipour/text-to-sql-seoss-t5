@@ -545,21 +545,21 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
         p_sql = rebuild_sql_val(p_sql)
         p_sql = rebuild_sql_col(p_valid_col_units, p_sql, kmap)
 
+        current_pred = p_str
+
         if etype in ["all", "exec"]:
             exec_score = eval_exec_match(db, p_str, g_str, p_sql, g_sql)
             if exec_score:
                 scores[hardness]['exec'] += 1.0
                 scores['all']['exec'] += 1.0
+                current_pred += " _EX"
 
         if etype in ["all", "match"]:
             exact_score = evaluator.eval_exact_match(p_sql, g_sql)
             partial_scores = evaluator.partial_scores
             
-            # log failures
-            if exact_score == 0: 
-                failures.append(p_str + " _FAILURE")
-            else:
-                failures.append(p_str)
+            if exact_score == 1:
+                current_pred += " _EM"        
 
             # print all queries
             print("{} {} pred: {}".format(index, hardness,p_str))
@@ -591,6 +591,8 @@ def evaluate(gold, predict, db_dir, etype, kmaps):
                 'exact': exact_score,
                 'partial': partial_scores
             })
+
+        failures.append(current_pred)
 
     # Write predicted queries and their result to a file
     with open(os.path.join(os.path.dirname(predict), 'failures.txt'), 'w') as f:
