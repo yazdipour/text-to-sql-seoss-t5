@@ -20,4 +20,3 @@ mv dataset_files/ori_dataset/spider-syn dataset_files/ori_dataset/spider_syn
 unzip dataset_files/spider-realistic.zip -d dataset_files/ori_dataset/
 mv dataset_files/ori_dataset/spider-realistic dataset_files/ori_dataset/spider_realistic
 chmod -R 777 dataset_files/
-python format_gold.py
