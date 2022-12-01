@@ -199,16 +199,16 @@ class Seq2SeqTrainer(transformers.trainer_seq2seq.Seq2SeqTrainer):
         inputs = self._prepare_inputs(inputs)
         
         # Extract the model from any wrapper classes, e.g. DistributedDataParallel
-        model = unwrap_model(self.model)
+        unwrapped_model = unwrap_model(self.model)
 
         # XXX: adapt synced_gpus for fairscale as well
         gen_kwargs = {
-            "max_length": self._max_length if self._max_length is not None else self.model.config.max_length,
-            "num_beams": self._num_beams if self._num_beams is not None else self.model.config.num_beams,
+            "max_length": self._max_length if self._max_length is not None else unwrapped_model.config.max_length,
+            "num_beams": self._num_beams if self._num_beams is not None else unwrapped_model.config.num_beams,
             "synced_gpus": False,
         }
 
-        generated_tokens = self.model.generate(
+        generated_tokens = unwrapped_model.generate(
             inputs["input_ids"],
             attention_mask=inputs["attention_mask"],
             **gen_kwargs,
