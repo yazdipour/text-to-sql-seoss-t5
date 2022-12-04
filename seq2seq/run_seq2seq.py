@@ -32,6 +32,7 @@ from seq2seq.utils.spider import SpiderTrainer
 from seq2seq.utils.cosql import CoSQLTrainer
 
 import torch
+import traceback
 from seq2seq.eval_spider.format_predictions import format_predictions
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -178,6 +179,8 @@ def main() -> None:
         except Exception as e:
             print("The following error was thrown when parallelising the model:")
             print(e)
+            print("Full traceback:")
+            print(traceback.format_exc())
         if isinstance(model, T5ForConditionalGeneration):
             model.resize_token_embeddings(len(tokenizer))
 
