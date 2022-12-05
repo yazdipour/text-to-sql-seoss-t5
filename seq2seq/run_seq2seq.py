@@ -173,9 +173,9 @@ def main() -> None:
             use_auth_token=True if model_args.use_auth_token else None,
         )
         try:
-            model = torch.nn.parallel.DistributedDataParallel(model)
-            model.to(device)
-            #model.parallelize()
+            #model = torch.nn.parallel.DistributedDataParallel(model)
+            model.parallelize()
+            model = model.to(device)
         except Exception as e:
             print("The following error was thrown when parallelising the model:")
             print(e)
