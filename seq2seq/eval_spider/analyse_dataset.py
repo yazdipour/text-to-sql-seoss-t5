@@ -198,6 +198,7 @@ def analyse_dataset(dataset_name):
             output_file.write(q + '\n')
 
     print(f"Wrote result to {out_filename}")
+    print('Result can be pasted into Google Sheets with Ctrl-V --> click Paste Options at bottom-right --> Split text to columns --> Change separator --> Custom --> Type "|" --> Enter')
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
