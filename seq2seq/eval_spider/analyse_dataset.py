@@ -34,7 +34,6 @@ def form_clause_str(sql_dict, delimiter='|'):
     # select: is distinct, aggregation
     # from
     # from: no. tables
-    # from: no. joins
     # where: has and/or, has nested subquery
     # groupBy
     # having: has and/or, aggregation, has nested subquery
@@ -68,14 +67,6 @@ def form_clause_str(sql_dict, delimiter='|'):
     # number of tables in from clause
     no_tables = len(from_clause.get('table_units', []))
     clause_str += str(no_tables)
-    clause_str += delimiter
-
-    # number of joins in from clause
-    if no_tables > 1:
-        no_joins = no_tables - 1
-    else:
-        no_joins = 0
-    clause_str += str(no_joins)
     clause_str += delimiter
 
     # where clause
