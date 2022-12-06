@@ -35,8 +35,6 @@ import torch
 import traceback
 from seq2seq.eval_spider.format_predictions import format_predictions
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 def main() -> None:
     # See all possible arguments by passing the --help flag to this script.
     parser = HfArgumentParser(
@@ -173,9 +171,10 @@ def main() -> None:
             use_auth_token=True if model_args.use_auth_token else None,
         )
         try:
-            #model = torch.nn.parallel.DistributedDataParallel(model)
-            model.parallelize()
-            model = model.to(device)
+            rank = torch.distributed.get_rank()
+            device_id = rank % torch.cuda.device_count()
+            model = model.to(device_id)
+            model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[device_id])
         except Exception as e:
             print("The following error was thrown when parallelising the model:")
             print(e)
