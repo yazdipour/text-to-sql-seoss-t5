@@ -71,9 +71,10 @@ def form_clause_str(sql_dict, delimiter='|'):
     clause_str += delimiter
 
     # number of joins in from clause
-    no_joins = len(from_clause.get('conds', []))
-    if no_joins > no_tables:
-        no_joins -= 2
+    if no_tables > 1:
+        no_joins = no_tables - 1
+    else:
+        no_joins = 0
     clause_str += str(no_joins)
     clause_str += delimiter
 
