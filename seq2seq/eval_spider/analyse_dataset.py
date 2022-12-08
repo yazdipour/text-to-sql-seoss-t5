@@ -180,6 +180,10 @@ def analyse_dataset(dataset_name):
             instance_str += eval_hardness(i['sql'])
             instance_str += f" {delimiter} "
             instance_str += form_clause_str(i['sql'], delimiter)
+            instance_str += f" {delimiter}"
+            instance_str += str(len(i['query']))
+            instance_str += f" {delimiter}"
+            instance_str += str(len(i['question']))
 
             query_data.append(instance_str)
 
