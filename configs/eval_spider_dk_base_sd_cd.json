@@ -1,6 +1,6 @@
 {
     "run_name": "spider-dk-eval-schemad-base",
-    "model_name_or_path": "totem37/DocuT5-Base-CD",
+    "model_name_or_path": "totem37/DocuT5-Base-SD",
     "dataset": "spider_dk",
     "source_prefix": "",
     "schema_serialization_type": "peteshaw",
