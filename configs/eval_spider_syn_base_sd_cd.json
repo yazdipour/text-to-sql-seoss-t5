@@ -1,6 +1,6 @@
 {
     "run_name": "spider-syn-eval-schemad-base",
-    "model_name_or_path": "totem37/DocuT5-Base-CD",
+    "model_name_or_path": "totem37/DocuT5-Base-SD",
     "dataset": "spider_syn",
     "source_prefix": "",
     "schema_serialization_type": "peteshaw",
