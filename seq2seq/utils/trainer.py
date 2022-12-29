@@ -254,7 +254,9 @@ class Seq2SeqTrainer(transformers.trainer_seq2seq.Seq2SeqTrainer):
         print(f'Model type: {type(self.model)}')
         print(f'Unwrapped model type: {type(unwrap_model(self.model))}')
         if not isinstance(self.model, PreTrainedModel):
+            print("Model is not an instance of PreTrainedModel")
             if isinstance(unwrap_model(self.model), PreTrainedModel):
+                print("Unwrapped model is an instance of PreTrainedModel, saving unwrapped model"
                 if state_dict is None:
                     state_dict = self.model.state_dict()
                 unwrap_model(self.model).save_pretrained(output_dir, state_dict=state_dict)
@@ -264,6 +266,7 @@ class Seq2SeqTrainer(transformers.trainer_seq2seq.Seq2SeqTrainer):
                     state_dict = self.model.state_dict()
                 torch.save(state_dict, os.path.join(output_dir, WEIGHTS_NAME))
         else:
+            print("Model is an instance of PreTrainedModel, saving.")
             self.model.save_pretrained(output_dir, state_dict=state_dict)
         if self.tokenizer is not None:
             self.tokenizer.save_pretrained(output_dir)
