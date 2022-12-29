@@ -256,7 +256,7 @@ class Seq2SeqTrainer(transformers.trainer_seq2seq.Seq2SeqTrainer):
         if not isinstance(self.model, PreTrainedModel):
             print("Model is not an instance of PreTrainedModel")
             if isinstance(unwrap_model(self.model), PreTrainedModel):
-                print("Unwrapped model is an instance of PreTrainedModel, saving unwrapped model"
+                print("Unwrapped model is an instance of PreTrainedModel, saving unwrapped model")
                 if state_dict is None:
                     state_dict = self.model.state_dict()
                 unwrap_model(self.model).save_pretrained(output_dir, state_dict=state_dict)
