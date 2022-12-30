@@ -36,6 +36,9 @@ import torch
 import traceback
 from seq2seq.eval_spider.format_predictions import format_predictions
 
+# Necessary to prevent "HTTP Error 403: rate limit exceeded" with PyTorch 1.9.0
+torch.hub._validate_not_a_forked_repo=lambda a,b,c: True
+
 def main() -> None:
     # See all possible arguments by passing the --help flag to this script.
     parser = HfArgumentParser(
@@ -161,11 +164,16 @@ def main() -> None:
             )
         else:
             model_cls_wrapper = lambda model_cls: model_cls
-
         
         # Check if model weights were saved with "module." prefix
-        state_dict = torch.load(model_args.model_name_or_path)
-        if 'module.' in state_dict.keys()[0]:
+        if os.path.exists(model_args.model_name_or_path):
+            state_dict = torch.load(model_args.model_name_or_path).state_dict()
+        else:
+            state_dict = torch.hub.load('huggingface/pytorch-transformers', 'model', model_args.model_name_or_path).state_dict()
+
+        if 'module.' in list(state_dict.keys())[0]:
+            # This code is not reached because the above torch.load reinitialized the weights
+            print("Model weights were saved with 'module.' prefix, removing this prefix so the model can be loaded")
             new_state_dict = OrderedDict()
             for k, v in state_dict.items():
                 name = k[7:] # remove 'module.' of DataParallel/DistributedDataParallel
@@ -173,6 +181,7 @@ def main() -> None:
                 
             # Initialize model from the updated state_dict
             model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
+                None,
                 state_dict=new_state_dict,
                 from_tf=bool(".ckpt" in model_args.model_name_or_path),
                 config=config,
@@ -184,7 +193,8 @@ def main() -> None:
         else:
             # Initialize model from the given name or path
             model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
-                model_args.model_name_or_path,
+                None,
+                state_dict=state_dict,
                 from_tf=bool(".ckpt" in model_args.model_name_or_path),
                 config=config,
                 cache_dir=model_args.cache_dir,
