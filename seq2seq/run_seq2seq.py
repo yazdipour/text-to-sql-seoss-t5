@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 import os
 import json
 from pathlib import Path
+from collections import OrderedDict
 from contextlib import nullcontext
 from dataclasses import asdict, fields
 from transformers.hf_argparser import HfArgumentParser
@@ -161,16 +162,38 @@ def main() -> None:
         else:
             model_cls_wrapper = lambda model_cls: model_cls
 
-        # Initialize model
-        model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
-            model_args.model_name_or_path,
-            from_tf=bool(".ckpt" in model_args.model_name_or_path),
-            config=config,
-            cache_dir=model_args.cache_dir,
-            revision=model_args.model_revision,
-            use_auth_token=True if model_args.use_auth_token else None,
-        )
+        
+        # Check if model weights were saved with "module." prefix
+        state_dict = torch.load(model_args.model_name_or_path)
+        if 'module.' in state_dict.keys()[0]:
+            new_state_dict = OrderedDict()
+            for k, v in state_dict.items():
+                name = k[7:] # remove 'module.' of DataParallel/DistributedDataParallel
+                new_state_dict[name] = v
+                
+            # Initialize model from the updated state_dict
+            model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
+                state_dict=new_state_dict,
+                from_tf=bool(".ckpt" in model_args.model_name_or_path),
+                config=config,
+                cache_dir=model_args.cache_dir,
+                revision=model_args.model_revision,
+                use_auth_token=True if model_args.use_auth_token else None,
+            )
+        
+        else:
+            # Initialize model from the given name or path
+            model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
+                model_args.model_name_or_path,
+                from_tf=bool(".ckpt" in model_args.model_name_or_path),
+                config=config,
+                cache_dir=model_args.cache_dir,
+                revision=model_args.model_revision,
+                use_auth_token=True if model_args.use_auth_token else None,
+            )
+            
         try:
+            # Attempt to parallelise the model
             rank = torch.distributed.get_rank()
             device_id = rank % torch.cuda.device_count()
             model = model.to(device_id)
@@ -180,6 +203,7 @@ def main() -> None:
             print(e)
             print("Full traceback:")
             print(traceback.format_exc())
+            
         if isinstance(model, T5ForConditionalGeneration):
             model.resize_token_embeddings(len(tokenizer))
 
