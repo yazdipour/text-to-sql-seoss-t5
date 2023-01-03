@@ -35,6 +35,7 @@ from seq2seq.utils.cosql import CoSQLTrainer
 import torch
 import traceback
 from seq2seq.eval_spider.format_predictions import format_predictions
+from seq2seq.utils.torch_module import DistributedDataParallel
 
 # Necessary to prevent "HTTP Error 403: rate limit exceeded" with PyTorch 1.9.0
 torch.hub._validate_not_a_forked_repo=lambda a,b,c: True
@@ -207,7 +208,7 @@ def main() -> None:
             rank = torch.distributed.get_rank()
             device_id = rank % torch.cuda.device_count()
             model = model.to(device_id)
-            model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[device_id])
+            model = DistributedDataParallel(model, device_ids=[device_id])
         except Exception as e:
             print("The following error was thrown when parallelising the model:")
             print(e)
