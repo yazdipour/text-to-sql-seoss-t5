@@ -62,8 +62,8 @@ def main() -> None:
         picard_args, model_args, data_args, data_training_args, training_args = parser.parse_dict(args=data)
     else:
         picard_args, model_args, data_args, data_training_args, training_args = parser.parse_args_into_dataclasses()
-    
-    # If model_name_or_path includes ??? instead of the number of steps, 
+
+    # If model_name_or_path includes ??? instead of the number of steps,
     # we load the latest checkpoint.
     if 'checkpoint-???' in model_args.model_name_or_path:
         model_args.model_name_or_path = get_last_checkpoint(
@@ -165,21 +165,22 @@ def main() -> None:
             )
         else:
             model_cls_wrapper = lambda model_cls: model_cls
-        
-        # Check if model weights were saved with "module." prefix
-        if os.path.exists(model_args.model_name_or_path):
-            state_dict = torch.load(model_args.model_name_or_path).state_dict()
-        else:
-            state_dict = torch.hub.load('huggingface/pytorch-transformers', 'model', model_args.model_name_or_path).state_dict()
 
-        if 'module.' in list(state_dict.keys())[0]:
+        # Check if model weights were saved with "module." prefix
+        #if os.path.exists(model_args.model_name_or_path):
+            #state_dict = torch.load(model_args.model_name_or_path).state_dict()
+        #else:
+            #state_dict = torch.hub.load('huggingface/pytorch-transformers', 'model', model_args.model_name_or_path).state_dict()
+
+        if False:
+        #if 'module.' in list(state_dict.keys())[0]:
             # This code is not reached because the above torch.load reinitialized the weights
             print("Model weights were saved with 'module.' prefix, removing this prefix so the model can be loaded")
             new_state_dict = OrderedDict()
             for k, v in state_dict.items():
                 name = k[7:] # remove 'module.' of DataParallel/DistributedDataParallel
                 new_state_dict[name] = v
-                
+
             # Initialize model from the updated state_dict
             model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
                 None,
@@ -190,19 +191,19 @@ def main() -> None:
                 revision=model_args.model_revision,
                 use_auth_token=True if model_args.use_auth_token else None,
             )
-        
+
         else:
             # Initialize model from the given name or path
             model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
-                None,
-                state_dict=state_dict,
+                model_args.model_name_or_path,
+                #state_dict=state_dict,
                 from_tf=bool(".ckpt" in model_args.model_name_or_path),
                 config=config,
                 cache_dir=model_args.cache_dir,
                 revision=model_args.model_revision,
                 use_auth_token=True if model_args.use_auth_token else None,
             )
-            
+
         try:
             # Attempt to parallelise the model
             rank = torch.distributed.get_rank()
@@ -214,7 +215,7 @@ def main() -> None:
             print(e)
             print("Full traceback:")
             print(traceback.format_exc())
-            
+
         if isinstance(model, T5ForConditionalGeneration):
             model.resize_token_embeddings(len(tokenizer))
 
@@ -258,7 +259,7 @@ def main() -> None:
         #     trainer = CoSQLTrainer(**trainer_kwargs)
         # else:
         #     raise NotImplementedError()
- 
+
         # Training
         if training_args.do_train:
             logger.info("*** Train ***")
@@ -319,7 +320,7 @@ def main() -> None:
             logger.info("*** Predict ***")
             for section, test_split in dataset_splits.test_splits.items():
                 results = trainer.predict(
-                    test_split.dataset, 
+                    test_split.dataset,
                     test_split.examples,
                     max_length=data_training_args.val_max_target_length,
                     max_time=data_training_args.val_max_time,
