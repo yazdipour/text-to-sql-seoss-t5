@@ -29,6 +29,6 @@ class Module(Module):
         if getattr(self.__class__, "get_extra_state", Module.get_extra_state) is not Module.get_extra_state:
             destination[extra_state_key] = self.get_extra_state()
             
-class DistributedDataParallel(Module):
+class DistributedDataParallel(Module, DistributedDataParallel):
     pass
             
