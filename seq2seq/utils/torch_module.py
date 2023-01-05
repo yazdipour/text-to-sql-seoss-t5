@@ -1,8 +1,6 @@
 from torch.nn import Module
 from torch.nn.parallel import DistributedDataParallel
 
-_EXTRA_STATE_KEY_SUFFIX = '_extra_state'
-
 class Module(Module):
     def _save_to_state_dict(self, destination, prefix, keep_vars):
         r"""Saves module state to `destination` dictionary, containing a state
@@ -25,10 +23,7 @@ class Module(Module):
         for name, buf in self._buffers.items():
             if buf is not None and name not in self._non_persistent_buffers_set:
                 destination[prefix + name] = buf if keep_vars else buf.detach()
-        extra_state_key = prefix + _EXTRA_STATE_KEY_SUFFIX
-        if getattr(self.__class__, "get_extra_state", Module.get_extra_state) is not Module.get_extra_state:
-            destination[extra_state_key] = self.get_extra_state()
-            
+        
 class DistributedDataParallel(Module, DistributedDataParallel):
     pass
             
