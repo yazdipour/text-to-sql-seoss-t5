@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from torch.nn import Module
 from torch.nn.parallel import DistributedDataParallel
 
@@ -15,15 +16,25 @@ class Module(Module):
             prefix (str): the prefix for parameters and buffers used in this
                 module
         """
+        print("Called overridden _save_to_state_dict")
+        print(f'prefix: {prefix}')
         if prefix == 'module.':
             prefix = ''
+        for name, param in self._parameters.items():
+            if param is not None:
+                if 'module.' in name:
+                    n = name[7:]
+                else:
+                    n = name[:]
+                destination[prefix + n] = param if keep_vars else param.detach()
+        for name, buf in self._buffers.items():
+            if 'module.' in name:
+                n = name[7:]
+            else:
+                n = name[:]
+            if buf is not None and n not in self._non_persistent_buffers_set:
+                destination[prefix + n] = buf if keep_vars else buf.detach()
         super()._save_to_state_dict(destination, prefix, keep_vars)
-#         for name, param in self._parameters.items():
-#             if param is not None:
-#                 destination[prefix + name] = param if keep_vars else param.detach()
-#         for name, buf in self._buffers.items():
-#             if buf is not None and name not in self._non_persistent_buffers_set:
-#                 destination[prefix + name] = buf if keep_vars else buf.detach()
 
     def _load_from_state_dict(self, state_dict, prefix, local_metadata, strict,
                               missing_keys, unexpected_keys, error_msgs):
@@ -39,7 +50,7 @@ class Module(Module):
             :attr:`state_dict` is not the same object as the input
             :attr:`state_dict` to :meth:`~torch.nn.Module.load_state_dict`. So
             it can be modified.
-            
+
         This method has been overridden to ensure models wrapped in a module can
         be loaded.
 
@@ -61,10 +72,14 @@ class Module(Module):
                 list, and will be reported together in
                 :meth:`~torch.nn.Module.load_state_dict`
         """
+        print("Called overridden _load_from_state_dict")
         if prefix == 'module.':
             prefix = ''
-        super()._load_from_state_dict(state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs)
-        
+        new_state_dict = OrderedDict()
+        for k, v in state_dict.items():
+            name = k[7:] # remove 'module.' of dataparallel
+            new_state_dict[name]=v
+        super()._load_from_state_dict(new_state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs)
+
 class DistributedDataParallel(Module, DistributedDataParallel):
     pass
-            
