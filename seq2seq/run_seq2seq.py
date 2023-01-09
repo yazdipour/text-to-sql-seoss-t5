@@ -35,7 +35,7 @@ from seq2seq.utils.cosql import CoSQLTrainer
 import torch
 import traceback
 from seq2seq.eval_spider.format_predictions import format_predictions
-from seq2seq.utils.torch_module import DistributedDataParallel
+from seq2seq.utils.torch_module import DistributedDataParallel, Module
 
 # Necessary to prevent "HTTP Error 403: rate limit exceeded" with PyTorch 1.9.0
 torch.hub._validate_not_a_forked_repo=lambda a,b,c: True
