@@ -166,43 +166,16 @@ def main() -> None:
         else:
             model_cls_wrapper = lambda model_cls: model_cls
 
-        # Check if model weights were saved with "module." prefix
-        #if os.path.exists(model_args.model_name_or_path):
-            #state_dict = torch.load(model_args.model_name_or_path).state_dict()
-        #else:
-            #state_dict = torch.hub.load('huggingface/pytorch-transformers', 'model', model_args.model_name_or_path).state_dict()
-
-        if False:
-        #if 'module.' in list(state_dict.keys())[0]:
-            # This code is not reached because the above torch.load reinitialized the weights
-            print("Model weights were saved with 'module.' prefix, removing this prefix so the model can be loaded")
-            new_state_dict = OrderedDict()
-            for k, v in state_dict.items():
-                name = k[7:] # remove 'module.' of DataParallel/DistributedDataParallel
-                new_state_dict[name] = v
-
-            # Initialize model from the updated state_dict
-            model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
-                None,
-                state_dict=new_state_dict,
-                from_tf=bool(".ckpt" in model_args.model_name_or_path),
-                config=config,
-                cache_dir=model_args.cache_dir,
-                revision=model_args.model_revision,
-                use_auth_token=True if model_args.use_auth_token else None,
-            )
-
-        else:
-            # Initialize model from the given name or path
-            model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
-                model_args.model_name_or_path,
-                #state_dict=state_dict,
-                from_tf=bool(".ckpt" in model_args.model_name_or_path),
-                config=config,
-                cache_dir=model_args.cache_dir,
-                revision=model_args.model_revision,
-                use_auth_token=True if model_args.use_auth_token else None,
-            )
+        # Initialize model from the given name or path
+        model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
+            model_args.model_name_or_path,
+            #state_dict=state_dict,
+            from_tf=bool(".ckpt" in model_args.model_name_or_path),
+            config=config,
+            cache_dir=model_args.cache_dir,
+            revision=model_args.model_revision,
+            use_auth_token=True if model_args.use_auth_token else None,
+        )
 
         try:
             # Attempt to parallelise the model
@@ -210,11 +183,8 @@ def main() -> None:
             device_id = rank % torch.cuda.device_count()
             model = model.to(device_id)
             model = DistributedDataParallel(model, device_ids=[device_id])
-        except Exception as e:
-            print("The following error was thrown when parallelising the model:")
-            print(e)
-            print("Full traceback:")
-            print(traceback.format_exc())
+        except:
+            print("Eerror was thrown when parallelising the model.")
 
         if isinstance(model, T5ForConditionalGeneration):
             model.resize_token_embeddings(len(tokenizer))
@@ -244,12 +214,10 @@ def main() -> None:
             "target_with_db_id": data_training_args.target_with_db_id,
         }
         #using spidertrainer as it is.
-        if data_args.dataset.replace('-', '_') in ["spider", "spider_realistic", "spider_syn", "spider_dk"]:
-            trainer = SpiderTrainer(**trainer_kwargs)
-        elif data_args.dataset in ["cosql", "cosql+spider"]:
+        if data_args.dataset in ["cosql", "cosql+spider"]:
             trainer = CoSQLTrainer(**trainer_kwargs)
         else:
-            raise NotImplementedError()
+            trainer = SpiderTrainer(**trainer_kwargs)
 
         trainer = SpiderTrainer(**trainer_kwargs)
 

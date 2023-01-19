@@ -1,7 +1,22 @@
 
-# E-commerce data assistant: Injecting knowledge in seq2seq SQL generation
+# SEOSS-Queries - a Software Engineering Dataset for Text-to-SQL and Question Answering Tasks
 
-This code is based on:
+This project is based on this dataset:
+
+```bibtex
+@article{article,
+author = {Tomova, Mihaela and Hofmann, Martin and Mäder, Patrick},
+year = {2022},
+month = {04},
+pages = {108211},
+title = {SEOSS-Queries - a Software Engineering Dataset for Text-to-SQL and Question Answering Tasks},
+volume = {42},
+journal = {Data in Brief},
+doi = {10.1016/j.dib.2022.108211}
+}
+```
+
+Also This code is developed on top of PICARD:
 
 ```bibtex
 @inproceedings{Scholak2021:PICARD,
@@ -20,7 +35,7 @@ This code is based on:
 
 This repository uses git submodules. Clone it like this:
 ```sh
-git clone --recurse-submodules https://github.com/totem37/docu-t5.git
+git clone --recurse-submodules https://github.com/yazdipour/seoss-t5.git
 ```
 
 Install Docker on Ubuntu with:

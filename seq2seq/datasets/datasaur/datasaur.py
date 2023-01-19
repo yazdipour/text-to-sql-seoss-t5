@@ -21,6 +21,7 @@ _LICENSE = ""
 
 _URL = "https://drive.google.com/uc?export=download&id=1Vs0m3cCv0Niv84ycO1aCUbxq5zfNwn_w&confirm=t"
 
+_URL = "https://drive.google.com/uc?export=download&id=1a4_QNUpbdAIVEFUOIVxu7DBZ1TizZ8Pw"
 
 class Datasaur(datasets.GeneratorBasedBuilder):
     VERSION = datasets.Version("1.0.0")
@@ -81,17 +82,17 @@ class Datasaur(datasets.GeneratorBasedBuilder):
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "data_filepaths": [
-                        downloaded_filepath +"/datasaur/train_datasaur.json",
+                        downloaded_filepath +"/seoss/train_onlypig.json",
                     ],
                     
-                    "db_path": downloaded_filepath +  "/datasaur/database",
+                    "db_path": downloaded_filepath +  "/seoss/database",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "data_filepaths": [downloaded_filepath + "/datasaur/dev.json"],
-                    "db_path": downloaded_filepath + "/datasaur/database",
+                    "data_filepaths": [downloaded_filepath + "/seoss/dev_pig_specific.json"],
+                    "db_path": downloaded_filepath + "/seoss/database",
                 },
             ),
         ]
