@@ -35,29 +35,16 @@ Also This code is developed on top of PICARD:
 
 This repository uses git submodules. Clone it like this:
 ```sh
-git clone --recurse-submodules https://github.com/yazdipour/seoss-t5.git
+git clone --recurse-submodules https://github.com/yazdipour/yazdipour/text-to-sql-seoss-t5.git
 ```
 
-Install Docker on Ubuntu with:
-```
-cd docu-t5
-./install_docker.sh
-```
+Install Docker on Ubuntu with: `./install_docker.sh`
 
-Download the required datasets:
-```
-./download_datasets.sh
-```
+Download the required datasets: `./download_datasets.sh`
 
-Pull the DocuT5 Docker image with:
-```
-make pull-eval-image
-```
+Pull the DocuT5 Docker image with: `make pull-eval-image`
 
-Alternatively, you can build the DocuT5 image from scratch. This is necessary if changes have been made to the model. To do this run:
-```
-make build-eval-image
-```
+Alternatively, you can build the DocuT5 image from scratch. This is necessary if changes have been made to the model. To do this run: `make build-eval-image`
 
 ### Training
 
@@ -65,14 +52,10 @@ The training script is located in `seq2seq/run_seq2seq.py`.
 
 Configuration files are located in `configs/`.
 
-Run training with:
-```
-make train
-```
-This puts you in a Docker image, in which you can run:
-```
-python seq2seq/run_seq2seq.py configs/train.json
-```
+Run training with: `make train`
+
+This puts you in a Docker image, in which you can run: `python seq2seq/run_seq2seq.py configs/train.json`
+
 Replace `train.json` with whatever config file you want to run.
 
 The model will be trained on the Spider dataset by default. 
