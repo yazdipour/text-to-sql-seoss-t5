@@ -87,7 +87,7 @@ def run():
 
     picard_args, model_args, data_args, data_training_args, training_args = parser.parse_dict(args=eval_args)
 
-    
+
     # If model_name_or_path includes ??? instead of the number of steps, 
     # we load the latest checkpoint.
     if 'checkpoint-???' in model_args.model_name_or_path:
@@ -147,7 +147,7 @@ def run():
 
     # Initialize config
     config = AutoConfig.from_pretrained(
-        model_args.config_name if model_args.config_name else model_args.model_name_or_path,
+        model_args.config_name or model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
@@ -161,7 +161,7 @@ def run():
 
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
-        model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
+        model_args.tokenizer_name or model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
         use_fast=model_args.use_fast_tokenizer,
         revision=model_args.model_revision,
@@ -194,7 +194,7 @@ def run():
         # Initialize model
         model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
             model_args.model_name_or_path,
-            from_tf=bool(".ckpt" in model_args.model_name_or_path),
+            from_tf=".ckpt" in model_args.model_name_or_path,
             config=config,
             cache_dir=model_args.cache_dir,
             revision=model_args.model_revision,
@@ -236,7 +236,7 @@ def run():
         #     trainer = CoSQLTrainer(**trainer_kwargs)
         # else:
         #     raise NotImplementedError()
- 
+
         # Training
         if training_args.do_train:
             logger.info("*** Train ***")

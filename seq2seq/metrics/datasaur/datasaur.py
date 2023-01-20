@@ -28,11 +28,14 @@ _CITATION = """\
 }
 """
 
+_URL = "https://drive.google.com/uc?export=download&id=1a4_QNUpbdAIVEFUOIVxu7DBZ1TizZ8Pw"  # Only PIG
+_URL = "https://drive.google.com/uc?export=download&id=178l736_pXD-oQRWLj9TqqBGYrWz4d4Lk"  # SPIDER + PIG
 
-_URL = "https://drive.google.com/uc?export=download&id=1a4_QNUpbdAIVEFUOIVxu7DBZ1TizZ8Pw"
+_URL = "/app/dataset_files/seoss+spider.zip"
+
 
 @datasets.utils.file_utils.add_start_docstrings(_DESCRIPTION, _KWARGS_DESCRIPTION)
-class Datasaur(datasets.Metric):
+class seoss(datasets.Metric):
     def __init__(
         self,
         config_name: Optional[str] = None,
@@ -58,7 +61,8 @@ class Datasaur(datasets.Metric):
             timeout=timeout,
             **kwargs
         )
-        self.test_suite_db_dir: Optional[str] = kwargs.pop("test_suite_db_dir", None)
+        self.test_suite_db_dir: Optional[str] = kwargs.pop(
+            "test_suite_db_dir", None)
 
     def _info(self):
         if self.config_name not in [
@@ -109,7 +113,8 @@ class Datasaur(datasets.Metric):
             exact_match = dict()
 
         if self.config_name == "test_suite" or self.config_name == "both":
-            test_suite = compute_test_suite_metric(predictions, references, db_dir=self.test_suite_db_dir)
+            test_suite = compute_test_suite_metric(
+                predictions, references, db_dir=self.test_suite_db_dir)
         else:
             test_suite = dict()
 

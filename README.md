@@ -60,7 +60,7 @@ Replace `train.json` with whatever config file you want to run.
 
 The model will be trained on the Spider dataset by default. 
 
-To run it on Datasaur, change in configs/train.json the field 'model-name-or-path' to 'datasaur'
+To run it on seoss, change in configs/train.json the field 'model-name-or-path' to 'seoss'
 
 To enable Foreign Keys Serialization, set in the same config file to 'schema_serialization_with_foreign_keys' to true
 

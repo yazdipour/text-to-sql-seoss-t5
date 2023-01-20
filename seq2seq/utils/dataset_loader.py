@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 
 def _log_duplicate_count(dataset: Dataset, dataset_name: str, split: str) -> None:
     d = dataset.to_dict()
-    d_t = [tuple((k, tuple(v)) for k, v in zip(d.keys(), vs)) for vs in zip(*d.values())]
+    d_t = [tuple((k, tuple(v)) for k, v in zip(d.keys(), vs))
+           for vs in zip(*d.values())]
     d_t_ = set(d_t)
     num_examples = len(d_t)
     duplicate_count = num_examples - len(d_t_)
@@ -47,11 +48,13 @@ def load_dataset(
     _spider_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
         path=data_args.metric_paths["spider"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
     )
-    _spider_add_serialized_schema = lambda ex: spider_add_serialized_schema(
+
+    def _spider_add_serialized_schema(ex): return spider_add_serialized_schema(
         ex=ex,
         data_training_args=data_training_args,
     )
-    _spider_pre_process_function = lambda batch, max_source_length, max_target_length: spider_pre_process_function(
+
+    def _spider_pre_process_function(batch, max_source_length, max_target_length): return spider_pre_process_function(
         batch=batch,
         max_source_length=max_source_length,
         max_target_length=max_target_length,
@@ -59,13 +62,13 @@ def load_dataset(
         tokenizer=tokenizer,
     )
 
-    _spider_dk_dataset_dict : Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
+    _spider_dk_dataset_dict: Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
         path=data_args.dataset_paths['spider_dk'], cache_dir=model_args.cache_dir
     )
     _spider_dk_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
         path=data_args.metric_paths["spider_dk"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
     )
-    _spider_syn_dataset_dict : Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
+    _spider_syn_dataset_dict: Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
         path=data_args.dataset_paths['spider_syn'], cache_dir=model_args.cache_dir
     )
     _spider_syn_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
@@ -78,50 +81,54 @@ def load_dataset(
     _cosql_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
         path=data_args.metric_paths["cosql"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
     )
-    _cosql_add_serialized_schema = lambda ex: cosql_add_serialized_schema(
+
+    def _cosql_add_serialized_schema(ex): return cosql_add_serialized_schema(
         ex=ex,
         data_training_args=data_training_args,
     )
-    _cosql_pre_process_function = lambda batch, max_source_length, max_target_length: cosql_pre_process_function(
+
+    def _cosql_pre_process_function(batch, max_source_length, max_target_length): return cosql_pre_process_function(
         batch=batch,
         max_source_length=max_source_length,
         max_target_length=max_target_length,
         data_training_args=data_training_args,
         tokenizer=tokenizer,
     )
-    #adding spider_realistic dataset, metric, using schema and preprocess funtions of spider as it is
-    _spider_realistic_dataset_dict : Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
+    # adding spider_realistic dataset, metric, using schema and preprocess funtions of spider as it is
+    _spider_realistic_dataset_dict: Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
         path=data_args.dataset_paths['spider_realistic'], cache_dir=model_args.cache_dir
     )
     _spider_realistic_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
         path=data_args.metric_paths["spider_realistic"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
     )
 
-    _spider_syn_dataset_dict : Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
+    _spider_syn_dataset_dict: Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
         path=data_args.dataset_paths['spider_syn'], cache_dir=model_args.cache_dir
     )
     _spider_syn_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
         path=data_args.metric_paths["spider_syn"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
     )
 
-    _spider_dk_dataset_dict : Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
+    _spider_dk_dataset_dict: Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
         path=data_args.dataset_paths['spider_dk'], cache_dir=model_args.cache_dir
     )
     _spider_dk_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
         path=data_args.metric_paths["spider_dk"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
     )
 
-    _datasaur_dataset_dict: Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
-        path=data_args.dataset_paths["datasaur"], cache_dir=model_args.cache_dir
+    _seoss_dataset_dict: Callable[[], DatasetDict] = lambda: datasets.load.load_dataset(
+        path=data_args.dataset_paths["seoss"], cache_dir=model_args.cache_dir
     )
-    _datasaur_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
-        path=data_args.metric_paths["datasaur"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
+    _seoss_metric: Callable[[], Metric] = lambda: datasets.load.load_metric(
+        path=data_args.metric_paths["seoss"], config_name=data_args.metric_config, test_suite_db_dir=data_args.test_suite_db_dir
     )
-    _datasaur_add_serialized_schema = lambda ex: spider_add_serialized_schema(
+
+    def _seoss_add_serialized_schema(ex): return spider_add_serialized_schema(
         ex=ex,
         data_training_args=data_training_args,
     )
-    _datasaur_pre_process_function = lambda batch, max_source_length, max_target_length: spider_pre_process_function(
+
+    def _seoss_pre_process_function(batch, max_source_length, max_target_length): return spider_pre_process_function(
         batch=batch,
         max_source_length=max_source_length,
         max_target_length=max_target_length,
@@ -146,7 +153,7 @@ def load_dataset(
     elif data_args.dataset == "spider_dk":
         metric = _spider_dk_metric()
         dataset_splits = prepare_splits(
-            dataset_dict= _spider_dk_dataset_dict(),
+            dataset_dict=_spider_dk_dataset_dict(),
             add_serialized_schema=_spider_add_serialized_schema,
             pre_process_function=_spider_pre_process_function,
             **_prepare_splits_kwargs,
@@ -159,18 +166,18 @@ def load_dataset(
             pre_process_function=_cosql_pre_process_function,
             **_prepare_splits_kwargs,
         )
-    elif data_args.dataset == "datasaur":
-        metric = _datasaur_metric()
+    elif data_args.dataset == "seoss":
+        metric = _seoss_metric()
         dataset_splits = prepare_splits(
-            dataset_dict=_datasaur_dataset_dict(),
-            add_serialized_schema=_datasaur_add_serialized_schema,
-            pre_process_function=_datasaur_pre_process_function,
+            dataset_dict=_seoss_dataset_dict(),
+            add_serialized_schema=_seoss_add_serialized_schema,
+            pre_process_function=_seoss_pre_process_function,
             **_prepare_splits_kwargs,
         )
     elif data_args.dataset == "spider_realistic":
         metric = _spider_realistic_metric()
         dataset_splits = prepare_splits(
-            dataset_dict= _spider_realistic_dataset_dict(),
+            dataset_dict=_spider_realistic_dataset_dict(),
             add_serialized_schema=_spider_add_serialized_schema,
             pre_process_function=_spider_pre_process_function,
             **_prepare_splits_kwargs,
@@ -178,7 +185,7 @@ def load_dataset(
     elif data_args.dataset == "spider_dk":
         metric = _spider_dk_metric()
         dataset_splits = prepare_splits(
-            dataset_dict= _spider_dk_dataset_dict(),
+            dataset_dict=_spider_dk_dataset_dict(),
             add_serialized_schema=_spider_add_serialized_schema,
             pre_process_function=_spider_pre_process_function,
             **_prepare_splits_kwargs,
@@ -186,7 +193,7 @@ def load_dataset(
     elif data_args.dataset == "spider_syn":
         metric = _spider_syn_metric()
         dataset_splits = prepare_splits(
-            dataset_dict= _spider_syn_dataset_dict(),
+            dataset_dict=_spider_syn_dataset_dict(),
             add_serialized_schema=_spider_add_serialized_schema,
             pre_process_function=_spider_pre_process_function,
             **_prepare_splits_kwargs,
@@ -217,11 +224,13 @@ def load_dataset(
             train_split = cosql_dataset_splits.train_split
         else:
             dataset: Dataset = concatenate_datasets(
-                dsets=[cosql_dataset_splits.train_split.dataset, spider_training_split.dataset]
+                dsets=[cosql_dataset_splits.train_split.dataset,
+                       spider_training_split.dataset]
             )
             train_split = TrainSplit(
                 dataset=dataset,
-                schemas={**spider_training_split.schemas, **cosql_dataset_splits.train_split.schemas},
+                schemas={**spider_training_split.schemas, **
+                         cosql_dataset_splits.train_split.schemas},
             )
         schemas = {
             **cosql_dataset_splits.schemas,
@@ -237,11 +246,14 @@ def load_dataset(
         raise NotImplementedError()
 
     if dataset_splits.train_split is not None:
-        _log_duplicate_count(dataset=dataset_splits.train_split.dataset, dataset_name=data_args.dataset, split="train")
+        _log_duplicate_count(dataset=dataset_splits.train_split.dataset,
+                             dataset_name=data_args.dataset, split="train")
     if dataset_splits.eval_split is not None:
-        _log_duplicate_count(dataset=dataset_splits.eval_split.dataset, dataset_name=data_args.dataset, split="eval")
+        _log_duplicate_count(dataset=dataset_splits.eval_split.dataset,
+                             dataset_name=data_args.dataset, split="eval")
     if dataset_splits.test_splits is not None:
         for section, split in dataset_splits.test_splits.items():
-            _log_duplicate_count(dataset=split.dataset, dataset_name=data_args.dataset, split=section)
+            _log_duplicate_count(dataset=split.dataset,
+                                 dataset_name=data_args.dataset, split=section)
 
     return metric, dataset_splits

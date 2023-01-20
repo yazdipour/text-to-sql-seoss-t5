@@ -19,32 +19,35 @@ _HOMEPAGE = ""
 
 _LICENSE = ""
 
-_URL = "https://drive.google.com/uc?export=download&id=1Vs0m3cCv0Niv84ycO1aCUbxq5zfNwn_w&confirm=t"
+_URL = "https://drive.google.com/uc?export=download&id=1a4_QNUpbdAIVEFUOIVxu7DBZ1TizZ8Pw"  # Only PIG
+_URL = "https://drive.google.com/uc?export=download&id=178l736_pXD-oQRWLj9TqqBGYrWz4d4Lk"  # SPIDER + PIG
 
-_URL = "https://drive.google.com/uc?export=download&id=1a4_QNUpbdAIVEFUOIVxu7DBZ1TizZ8Pw"
+_URL = "/app/dataset_files/seoss+spider.zip"
 
-class Datasaur(datasets.GeneratorBasedBuilder):
+
+class seoss(datasets.GeneratorBasedBuilder):
     VERSION = datasets.Version("1.0.0")
 
     BUILDER_CONFIGS = [
         datasets.BuilderConfig(
-            name="datasaur",
+            name="seoss",
             version=VERSION,
-            description="Datasaur",
+            description="seoss",
         ),
     ]
 
     def __init__(self, *args, writer_batch_size=None, **kwargs) -> None:
         super().__init__(*args, writer_batch_size=writer_batch_size, **kwargs)
         self.schema_cache = dict()
-        self.include_train_others: bool = kwargs.pop("include_train_others", False)
+        self.include_train_others: bool = kwargs.pop(
+            "include_train_others", False)
 
     def _info(self) -> datasets.DatasetInfo:
         features = datasets.Features(
             {
                 "query": datasets.Value("string"),
                 "question": datasets.Value("string"),
-                "db_description": datasets.Value("string"),    
+                "db_description": datasets.Value("string"),
                 "db_id": datasets.Value("string"),
                 "db_path": datasets.Value("string"),
                 "db_table_names": datasets.features.Sequence(datasets.Value("string")),
@@ -76,27 +79,25 @@ class Datasaur(datasets.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager) -> List[datasets.SplitGenerator]:
         downloaded_filepath = dl_manager.download_and_extract(_URL)
 
-
         return [
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
                     "data_filepaths": [
-                        downloaded_filepath +"/seoss/train_onlypig.json",
+                        downloaded_filepath + "/seoss+spider/train_spider_plus_pig.json",
                     ],
-                    
-                    "db_path": downloaded_filepath +  "/seoss/database",
+
+                    "db_path": downloaded_filepath + "/seoss+spider/database",
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "data_filepaths": [downloaded_filepath + "/seoss/dev_pig_specific.json"],
-                    "db_path": downloaded_filepath + "/seoss/database",
+                    "data_filepaths": [downloaded_filepath + "/seoss+spider/dev_spider_plus_pig_specific_and_not_specific.json"],
+                    "db_path": downloaded_filepath + "/seoss+spider/database",
                 },
             ),
         ]
-
 
     def _generate_examples(
         self, data_filepaths: List[str], db_path: str
@@ -128,7 +129,8 @@ class Datasaur(datasets.GeneratorBasedBuilder):
                         "db_column_types": schema["column_types"],
                         "db_primary_keys": [{"column_id": column_id} for column_id in schema["primary_keys"]],
                         "db_foreign_keys": [
-                            {"column_id": column_id, "other_column_id": other_column_id}
+                            {"column_id": column_id,
+                                "other_column_id": other_column_id}
                             for column_id, other_column_id in schema["foreign_keys"]
                         ],
                     }

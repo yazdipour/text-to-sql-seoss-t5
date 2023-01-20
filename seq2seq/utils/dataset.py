@@ -102,11 +102,13 @@ class DataTrainingArguments:
     )
     source_prefix: Optional[str] = field(
         default=None,
-        metadata={"help": "A prefix to add before every source text (useful for T5 models)."},
+        metadata={
+            "help": "A prefix to add before every source text (useful for T5 models)."},
     )
     schema_serialization_type: str = field(
         default="peteshaw",
-        metadata={"help": "Choose between ``verbose`` and ``peteshaw`` schema serialization."},
+        metadata={
+            "help": "Choose between ``verbose`` and ``peteshaw`` schema serialization."},
     )
     schema_serialization_randomized: bool = field(
         default=False,
@@ -114,11 +116,13 @@ class DataTrainingArguments:
     )
     schema_serialization_with_db_id: bool = field(
         default=True,
-        metadata={"help": "Whether or not to add the database id to the context. Needed for Picard."},
+        metadata={
+            "help": "Whether or not to add the database id to the context. Needed for Picard."},
     )
     schema_serialization_with_db_content: bool = field(
         default=True,
-        metadata={"help": "Whether or not to use the database content to resolve field matches."},
+        metadata={
+            "help": "Whether or not to use the database content to resolve field matches."},
     )
     schema_serialization_with_foreign_keys: str = field(
         default=False,
@@ -129,10 +133,12 @@ class DataTrainingArguments:
         default=False,
         metadata={"help": "Whether or not to include foreign keys in the schema"},
     )
-    normalize_query: bool = field(default=True, metadata={"help": "Whether to normalize the SQL queries."})
+    normalize_query: bool = field(default=True, metadata={
+                                  "help": "Whether to normalize the SQL queries."})
     target_with_db_id: bool = field(
         default=True,
-        metadata={"help": "Whether or not to add the database id to the target. Needed for Picard."},
+        metadata={
+            "help": "Whether or not to add the database id to the target. Needed for Picard."},
     )
 
     def __post_init__(self):
@@ -151,7 +157,7 @@ class DataArguments:
             "spider_dk": "./seq2seq/datasets/spider_dk",
             "spider_syn": "./seq2seq/datasets/spider_syn",
             "cosql": "./seq2seq/datasets/cosql",
-            "datasaur": "./seq2seq/datasets/datasaur",
+            "seoss": "./seq2seq/datasets/seoss",
             "spider_realistic": "./seq2seq/datasets/spider_realistic",
             "spider_syn": "./seq2seq/datasets/spider_syn",
             "spider_dk": "./seq2seq/datasets/spider_dk"
@@ -161,28 +167,30 @@ class DataArguments:
     )
     metric_config: str = field(
         default="both",
-        metadata={"help": "Choose between ``exact_match``, ``test_suite``, or ``both``."},
+        metadata={
+            "help": "Choose between ``exact_match``, ``test_suite``, or ``both``."},
     )
-    #we are referencing spider_realistic to spider metrics only as both use the main spider dataset as base.
+    # we are referencing spider_realistic to spider metrics only as both use the main spider dataset as base.
     metric_paths: Dict[str, str] = field(
         default_factory=lambda: {
             "spider": "./seq2seq/metrics/spider",
-            "spider_dk":"./seq2seq/metrics/spider",
-            "spider_syn":"./seq2seq/metrics/spider",
+            "spider_dk": "./seq2seq/metrics/spider",
+            "spider_syn": "./seq2seq/metrics/spider",
             "cosql": "./seq2seq/metrics/cosql",
-            "datasaur": "./seq2seq/metrics/datasaur",
-            "spider_realistic" : "./seq2seq/metrics/spider",
+            "seoss": "./seq2seq/metrics/seoss",
+            "spider_realistic": "./seq2seq/metrics/spider",
         },
         metadata={"help": "Paths of the metric modules."},
     )
     test_suite_db_dir: Optional[str] = field(
         default=None,
         metadata={"help": "Path to the test-suite databases."})
-    data_config_file : Optional[str] = field(
+    data_config_file: Optional[str] = field(
         default=None,
-        metadata={"help": "Path to data configuration file (specifying the database splits)"}
+        metadata={
+            "help": "Path to data configuration file (specifying the database splits)"}
     )
-    test_sections : Optional[List[str]] = field(
+    test_sections: Optional[List[str]] = field(
         default=None,
         metadata={"help": "Sections from the data config to use for testing"}
     )
@@ -259,9 +267,10 @@ def _prepare_eval_split(
     add_serialized_schema: Callable[[dict], dict],
     pre_process_function: Callable[[dict, Optional[int], Optional[int]], dict],
 ) -> EvalSplit:
-    if (data_training_args.max_val_samples is not None 
+    if (data_training_args.max_val_samples is not None
             and data_training_args.max_val_samples < len(dataset)):
-        eval_examples = dataset.select(range(data_training_args.max_val_samples))
+        eval_examples = dataset.select(
+            range(data_training_args.max_val_samples))
     else:
         eval_examples = dataset
     schemas = _get_schemas(examples=eval_examples)
@@ -333,9 +342,9 @@ def prepare_splits(
     }
 
     return DatasetSplits(
-        train_split=train_split, 
-        eval_split=eval_split, 
-        test_splits=test_splits, 
+        train_split=train_split,
+        eval_split=eval_split,
+        test_splits=test_splits,
         schemas=schemas
     )
 
@@ -355,28 +364,28 @@ def normalize(query: str) -> str:
 
     return comma_fix(white_space_fix(lower(query)))
 
+
 def serialize_schema(
     question: str,
     db_path: str,
     db_id: str,
     db_column_names: Dict[str, str],
     db_table_names: List[str],
-    db_foreign_keys:Dict[str, List[str]],
-    db_primary_keys:Dict[str, List[str]],
+    db_foreign_keys: Dict[str, List[str]],
+    db_primary_keys: Dict[str, List[str]],
     description: str,
     schema_serialization_type: str = "peteshaw",
     schema_serialization_randomized: bool = False,
     schema_serialization_with_db_id: bool = True,
     schema_serialization_with_db_content: bool = False,
     schema_serialization_with_foreign_keys: bool = False,
-    schema_serialization_with_db_description:bool = True,
+    schema_serialization_with_db_description: bool = True,
     normalize_query: bool = True,
 ) -> str:
     pair1 = db_foreign_keys['column_id']
     pair2 = db_foreign_keys['other_column_id']
     foreign = {}
 # {'table_id': [-1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3], 'column_name': ['*', 'Stadium_ID', 'Location', 'Name', 'Capacity', 'Highest', 'Lowest', 'Average', 'Singer_ID', 'Name', 'Country', 'Song_Name', 'Song_release_year', 'Age', 'Is_male', 'concert_ID', 'concert_Name', 'Theme', 'Stadium_ID', 'Year', 'concert_ID', 'Singer_ID']}
-
 
     desc_sep = " | description | "
     if schema_serialization_type == "verbose":
@@ -395,7 +404,7 @@ def serialize_schema(
         column_sep = " , "
         column_str_with_values = "{column} ( {values} )"
         column_str_without_values = "{column}"
-        column_sep_key=" - "
+        column_sep_key = " - "
         value_sep = " , "
     else:
         raise NotImplementedError
@@ -411,39 +420,45 @@ def serialize_schema(
                 db_path=(db_path + "/" + db_id + "/" + db_id + ".sqlite"),
             )
             if matches:
-                column_str =  column_str_with_values.format(column=column_name_str, values=value_sep.join(matches))
+                column_str = column_str_with_values.format(
+                    column=column_name_str, values=value_sep.join(matches))
             else:
-                column_str = column_str_without_values.format(column=column_name_str)
+                column_str = column_str_without_values.format(
+                    column=column_name_str)
         else:
-            column_str =  column_str_without_values.format(column=column_name_str)
+            column_str = column_str_without_values.format(
+                column=column_name_str)
 
-        no_or_both_primary_key = ( i in pair1 and pair2[pair1.index(i)] not in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] not in db_primary_keys['column_id']) and i not in db_primary_keys['column_id'] or ( i in pair1 and pair2[pair1.index(i)] in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] in db_primary_keys['column_id']) and i in db_primary_keys['column_id']
+        no_or_both_primary_key = (i in pair1 and pair2[pair1.index(i)] not in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] not in db_primary_keys['column_id']) and i not in db_primary_keys['column_id'] or (
+            i in pair1 and pair2[pair1.index(i)] in db_primary_keys['column_id'] or i in pair2 and pair1[pair2.index(i)] in db_primary_keys['column_id']) and i in db_primary_keys['column_id']
 
         column_ref_id = -1
         if i in pair1 and (pair2[pair1.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
-          column_ref_id = pair2[pair1.index(i)]
+            column_ref_id = pair2[pair1.index(i)]
         elif i in pair2 and (pair1[pair2.index(i)] in db_primary_keys['column_id'] or no_or_both_primary_key):
-          column_ref_id = pair1[pair2.index(i)]
-        
+            column_ref_id = pair1[pair2.index(i)]
+
         if column_ref_id != -1:
-            
+
             # primary_key_column = db_column_names['column_name'][column_ref_id]
             # primary_key_column = primary_key_column.lower() if normalize_query else primary_key_column
 
-            primary_key_table = db_table_names[int(db_column_names['table_id'][column_ref_id])]
-            primary_key_table = primary_key_table.lower() if normalize_query else primary_key_table
+            primary_key_table = db_table_names[int(
+                db_column_names['table_id'][column_ref_id])]
+            primary_key_table = primary_key_table.lower(
+            ) if normalize_query else primary_key_table
 
-            column_str = column_str +  ' foreign key ' + primary_key_table + ' '# + '.' + primary_key_column +''
+            column_str = column_str + ' foreign key ' + \
+                primary_key_table + ' '  # + '.' + primary_key_column +''
 
-
-        
         return column_str
     tables = [
         table_str.format(
             table=table_name.lower() if normalize_query else table_name,
             columns=column_sep.join(
                 map(
-                    lambda y: get_column_str(i=y[0], table_name=table_name, column_name=y[1][1]),
+                    lambda y: get_column_str(
+                        i=y[0], table_name=table_name, column_name=y[1][1]),
                     filter(
                         lambda y: y[1][0] == table_id,
                         enumerate(zip(
@@ -459,12 +474,11 @@ def serialize_schema(
     if schema_serialization_randomized:
         random.shuffle(tables)
     if schema_serialization_with_db_id:
-        serialized_schema = db_id_str.format(db_id=db_id) + table_sep.join(tables)
+        serialized_schema = db_id_str.format(
+            db_id=db_id) + table_sep.join(tables)
     else:
         serialized_schema = table_sep.join(tables)
     if schema_serialization_with_db_description:
-      serialized_schema += desc_sep + description
+        serialized_schema += desc_sep + description
     print('serializes: ' + serialized_schema)
     return serialized_schema
-
-

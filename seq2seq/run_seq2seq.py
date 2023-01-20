@@ -122,7 +122,7 @@ def main() -> None:
 
     # Initialize config
     config = AutoConfig.from_pretrained(
-        model_args.config_name if model_args.config_name else model_args.model_name_or_path,
+        model_args.config_name or model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
@@ -169,22 +169,21 @@ def main() -> None:
         # Initialize model from the given name or path
         model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
             model_args.model_name_or_path,
-            #state_dict=state_dict,
-            from_tf=bool(".ckpt" in model_args.model_name_or_path),
+            from_tf=".ckpt" in model_args.model_name_or_path,
             config=config,
             cache_dir=model_args.cache_dir,
             revision=model_args.model_revision,
             use_auth_token=True if model_args.use_auth_token else None,
         )
 
-        try:
-            # Attempt to parallelise the model
-            rank = torch.distributed.get_rank()
-            device_id = rank % torch.cuda.device_count()
-            model = model.to(device_id)
-            model = DistributedDataParallel(model, device_ids=[device_id])
-        except:
-            print("Eerror was thrown when parallelising the model.")
+        # try:
+        #     # Attempt to parallelise the model
+        #     rank = torch.distributed.get_rank()
+        #     device_id = rank % torch.cuda.device_count()
+        #     model = model.to(device_id)
+        #     model = DistributedDataParallel(model, device_ids=[device_id])
+        # except:
+        #     print("Error was thrown when parallelising the model.")
 
         if isinstance(model, T5ForConditionalGeneration):
             model.resize_token_embeddings(len(tokenizer))
@@ -218,15 +217,6 @@ def main() -> None:
             trainer = CoSQLTrainer(**trainer_kwargs)
         else:
             trainer = SpiderTrainer(**trainer_kwargs)
-
-        trainer = SpiderTrainer(**trainer_kwargs)
-
-        # if data_args.dataset in ["spider"]:
-        #     trainer = SpiderTrainer(**trainer_kwargs)
-        # elif data_args.dataset in ["cosql", "cosql+spider"]:
-        #     trainer = CoSQLTrainer(**trainer_kwargs)
-        # else:
-        #     raise NotImplementedError()
 
         # Training
         if training_args.do_train:
@@ -278,7 +268,7 @@ def main() -> None:
             try:
                 if isinstance(trainer, SpiderTrainer):
                     format_predictions(f"{training_args.output_dir}/predictions_eval_None.json")
-                    os.system(f"cd seq2seq/eval_spider && python evaluation.py --gold {training_args.output_dir}/../../dataset_files/ori_dataset/{data_args.dataset.replace('_', '-')}/dev_gold.sql --pred {training_args.output_dir}/predictions.sql --etype all --db {training_args.output_dir}/../../dataset_files/ori_dataset/{data_args.dataset.replace('_', '-')}/database --table {training_args.output_dir}/../../dataset_files/ori_dataset/{data_args.dataset.replace('_', '-')}/tables.json > {training_args.output_dir}/eval_breakdown.txt && cat {training_args.output_dir}/eval_breakdown.txt")
+                    os.system(f"cd seq2seq/eval_spider && python evaluation.py --gold /app/dataset_files/ori_dataset/{data_args.dataset}/{data_args.gold_json} --pred {training_args.output_dir}/predictions.sql --etype all --db /app/dataset_files/ori_dataset/{data_args.dataset}/database --table /app/dataset_files/ori_dataset/{data_args.dataset}/{data_args.tables_json} > {training_args.output_dir}/eval_breakdown.txt && cat {training_args.output_dir}/eval_breakdown.txt")
             except Exception as e:
                 print(e)
                 print("The detailed evaluation threw an error, skipping.")

@@ -159,6 +159,6 @@ if __name__ == "__main__":
     main()
 
 
-# gcloud compute --project=datasaur firewall-rules create default-allow-http --direction=INGRESS --priority=1000 --network=default --action=ALLOW  rules=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=http-server
+# gcloud compute --project=seoss firewall-rules create default-allow-http --direction=INGRESS --priority=1000 --network=default --action=ALLOW  rules=tcp:80 --source-ranges=0.0.0.0/0 --target-tags=http-server
 
-# gcloud compute instances add-tags deeplearning-6-twin-vm --tags datasaur
+# gcloud compute instances add-tags deeplearning-6-twin-vm --tags seoss

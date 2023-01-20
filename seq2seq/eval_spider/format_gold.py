@@ -37,8 +37,8 @@ def format_sql_field(json_filename, db_dir):
         output_file.write(json.dumps(all_instances))
 
 if __name__ == "__main__":
-    json_filename = "dataset_files/ori_dataset/spider_dk/spider-DK.json"
-    db_dir = "dataset_files/ori_dataset/spider_dk/database"
+    json_filename = "/app/dataset_files/ori_dataset/seoss/train_onlypig.json"
+    db_dir = "/app/dataset_files/ori_dataset/seoss/database"
     format_sql_field(json_filename, db_dir)
     format_gold(json_filename)
 
