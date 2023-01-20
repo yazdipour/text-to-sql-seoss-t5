@@ -69,6 +69,7 @@ eval:
 			--mount type=bind,source=$(BASE_DIR)/seq2seq,target=/app/seq2seq \
 			--mount type=bind,source=$(BASE_DIR)/eval,target=/eval \
 			--mount type=bind,source=$(BASE_DIR)/dataset_files,target=/app/dataset_files \
+			--mount type=bind,source=$(BASE_DIR)/.vscode,target=/app/.vscode \
 			$(IMAGE_NAME):$(IMAGE_TAG) \
 			# /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
 
