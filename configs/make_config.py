@@ -3,9 +3,9 @@ import json
 import subprocess
 
 model_name_or_path = [
-    ("tscholak/1zha5ono", "t5-lm100k-base"),
-    ("tscholak/3vnuv1vf", "t5-lm100k-large"),
-    ("tscholak/2jrayxos", "t5-lm100k-large"),
+    ("tscholak/1zha5ono", "t5-lm100k-spider-base"),
+    ("tscholak/3vnuv1vf", "t5-lm100k-spider-large"),
+    ("tscholak/2jrayxos", "t5-lm100k-spider+cosql-large"),
 ]
 num_beams = [1, 2, 4]
 picard_max_tokens_to_check = [2]

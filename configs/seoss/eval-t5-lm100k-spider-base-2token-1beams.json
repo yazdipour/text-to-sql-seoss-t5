@@ -1,7 +1,7 @@
 {
-    "run_name": "eval-t5-lm100k-base-2token-2beams",
+    "run_name": "eval-t5-lm100k-spider-base-2token-1beams",
     "model_name_or_path": "tscholak/1zha5ono",
-    "dataset": "seoss",
+    "dataset": "datasaur",
     "source_prefix": "",
     "schema_serialization_type": "peteshaw",
     "schema_serialization_randomized": false,
@@ -10,7 +10,7 @@
     "schema_serialization_foreign_keys": true,
     "normalize_query": true,
     "target_with_db_id": true,
-    "output_dir": "/eval-t5-lm100k-base-2token-2beams",
+    "output_dir": "/eval-t5-lm100k-spider-base-2token-1beams",
     "cache_dir": "/transformers_cache",
     "do_train": false,
     "do_eval": true,
@@ -21,7 +21,7 @@
         "wandb"
     ],
     "predict_with_generate": true,
-    "num_beams": 2,
+    "num_beams": 1,
     "num_beam_groups": 1,
     "diversity_penalty": 0.0,
     "max_val_samples": 1034,

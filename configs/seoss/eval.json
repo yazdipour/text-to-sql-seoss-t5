@@ -1,7 +1,7 @@
 {
     "run_name": "t5base+picard-seoss-eval-basic",
     "model_name_or_path": "tscholak/1zha5ono",
-    "dataset": "seoss",
+    "dataset": "datasaur",
     "source_prefix": "",
     "schema_serialization_type": "peteshaw",
     "schema_serialization_randomized": false,
