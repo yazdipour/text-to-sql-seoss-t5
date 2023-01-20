@@ -21,7 +21,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "configs/seoss/eval-t5-base-spider-2token-2beams.json"
+                "configs/eval-dev.json"
             ]
         }
     ]

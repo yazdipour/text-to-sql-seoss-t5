@@ -1,7 +1,7 @@
 {
-    "run_name": "spider-eval-foreignk",
-    "model_name_or_path": "elena-soare/bat-pre-trained",
-    "dataset": "spider",
+    "run_name": "t5base+picard-seoss-eval",
+    "model_name_or_path": "tscholak/1zha5ono",
+    "dataset": "seoss",
     "source_prefix": "",
     "schema_serialization_type": "peteshaw",
     "schema_serialization_randomized": false,
@@ -17,7 +17,9 @@
     "fp16": false,
     "per_device_eval_batch_size": 1,
     "seed": 1,
-    "report_to": ["wandb"],
+    "report_to": [
+        "wandb"
+    ],
     "predict_with_generate": true,
     "num_beams": 4,
     "num_beam_groups": 1,

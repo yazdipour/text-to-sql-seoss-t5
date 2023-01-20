@@ -12,7 +12,7 @@ num_beams = [2, 4]
 picard_max_tokens_to_check = [2]
 
 # Load the JSON file
-with open("configs/eval_seoss_template.json") as json_file:
+with open("configs/eval.json") as json_file:
     config = json.load(json_file)
 
 for mdl, nb, pmttc in itertools.product(model_name_or_path, num_beams, picard_max_tokens_to_check):
