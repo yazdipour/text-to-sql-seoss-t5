@@ -1,4 +1,5 @@
 import itertools
+import os
 import json
 import subprocess
 
@@ -7,7 +8,7 @@ model_name_or_path = [
     ("tscholak/3vnuv1vf", "t5-lm100k-spider-large"),
     ("tscholak/2jrayxos", "t5-lm100k-spider+cosql-large"),
 ]
-num_beams = [1, 2, 4]
+num_beams = [2, 4]
 picard_max_tokens_to_check = [2]
 
 # Load the JSON file
@@ -19,7 +20,7 @@ for mdl, nb, pmttc in itertools.product(model_name_or_path, num_beams, picard_ma
     config["num_beams"] = nb
     config["picard_max_tokens_to_check"] = pmttc
     config["run_name"] = f"eval-{mdl[1]}-{pmttc}token-{nb}beams"
-    config["output_dir"] = f'/{config["run_name"]}'
+    config["output_dir"] = f'/eval/{config["run_name"]}'
     with open(f'configs/seoss/{config["run_name"]}.json', "w") as outfile:
         json.dump(config, outfile)
     # subprocess.run(["python", "eval.py", f'{config["run_name"]}.json'])
