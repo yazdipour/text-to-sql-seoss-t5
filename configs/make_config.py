@@ -1,18 +1,18 @@
 import itertools
-import os
 import json
-import subprocess
 
 model_name_or_path = [
-    ("tscholak/1zha5ono", "t5-lm100k-spider-base"),
-    ("tscholak/3vnuv1vf", "t5-lm100k-spider-large"),
-    ("tscholak/2jrayxos", "t5-lm100k-spider+cosql-large"),
+    ("tscholak/1zha5ono", "t5-base-spider"),
+    ("tscholak/3vnuv1vf", "t5-large-spider"),
+    ("tscholak/2jrayxos", "t5-large-spider+cosql"),
+    ("tscholak/cxmefzzi", "t5-3B-spider"),
+    ("tscholak/2e826ioa", "t5-3B-spider+cosql"),
 ]
 num_beams = [2, 4]
 picard_max_tokens_to_check = [2]
 
 # Load the JSON file
-with open("configs/seoss/eval.json") as json_file:
+with open("configs/eval_seoss_template.json") as json_file:
     config = json.load(json_file)
 
 for mdl, nb, pmttc in itertools.product(model_name_or_path, num_beams, picard_max_tokens_to_check):
