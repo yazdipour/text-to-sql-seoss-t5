@@ -14,6 +14,16 @@ class DataTrainingArguments:
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
 
+    tables_json: Optional[str] = field(
+        default="tables.json",
+        metadata={
+            "help": "Tables.json name"},
+    )
+    gold_json: Optional[str] = field(
+        default="gold.json",
+        metadata={
+            "help": "gold.json name"},
+    )
     overwrite_cache: bool = field(
         default=False,
         metadata={"help": "Overwrite the cached training and evaluation sets"},

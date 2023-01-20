@@ -3,6 +3,7 @@ from seq2seq.eval_spider.process_sql import get_schema, get_sql, Schema
 import json
 import os
 
+
 def format_gold(json_filename):
     """
     Formats gold SQL queries from a .json file to a .sql file so they can be evaluated
@@ -20,13 +21,14 @@ def format_gold(json_filename):
         for q in gold_queries:
             output_file.write(q + '\n')
 
+
 def format_sql_field(json_filename, db_dir):
     """
     Creates a 'sql' field in the given .json file
     """
     with open(json_filename, 'r') as input_file:
         all_instances = json.loads(input_file.read())
-    
+
     for i in all_instances:
         db = os.path.join(db_dir, i['db_id'], i['db_id'] + ".sqlite")
         schema = Schema(get_schema(db))
@@ -36,9 +38,9 @@ def format_sql_field(json_filename, db_dir):
     with open(json_filename, 'w') as output_file:
         output_file.write(json.dumps(all_instances))
 
+
 if __name__ == "__main__":
-    json_filename = "/app/dataset_files/ori_dataset/seoss/train_onlypig.json"
-    db_dir = "/app/dataset_files/ori_dataset/seoss/database"
+    json_filename = "/app/dataset_files/seoss/train_onlypig.json"
+    db_dir = "/app/dataset_files/seoss/database"
     format_sql_field(json_filename, db_dir)
     format_gold(json_filename)
-

@@ -1,4 +1,29 @@
 # Set up logging
+from seq2seq.utils.torch_module import DistributedDataParallel, Module
+from seq2seq.eval_spider.format_predictions import format_predictions
+import traceback
+import torch
+from seq2seq.utils.cosql import CoSQLTrainer
+from seq2seq.utils.spider import SpiderTrainer
+from seq2seq.utils.dataset_loader import load_dataset
+from seq2seq.utils.dataset import DataTrainingArguments, DataArguments
+from seq2seq.utils.picard_model_wrapper import PicardArguments, PicardLauncher, with_picard
+from seq2seq.utils.args import ModelArguments
+from tokenizers import AddedToken
+from transformers.tokenization_utils_fast import PreTrainedTokenizerFast
+from transformers.models.t5.tokenization_t5_fast import T5TokenizerFast
+from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration
+from transformers.trainer_utils import get_last_checkpoint, set_seed
+from transformers.data.data_collator import DataCollatorForSeq2Seq
+from transformers.models.auto import AutoConfig, AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers.training_args_seq2seq import Seq2SeqTrainingArguments
+from transformers.hf_argparser import HfArgumentParser
+from dataclasses import asdict, fields
+from contextlib import nullcontext
+from collections import OrderedDict
+from pathlib import Path
+import json
+import os
 import sys
 import logging
 
@@ -10,40 +35,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-import os
-import json
-from pathlib import Path
-from collections import OrderedDict
-from contextlib import nullcontext
-from dataclasses import asdict, fields
-from transformers.hf_argparser import HfArgumentParser
-from transformers.training_args_seq2seq import Seq2SeqTrainingArguments
-from transformers.models.auto import AutoConfig, AutoTokenizer, AutoModelForSeq2SeqLM
-from transformers.data.data_collator import DataCollatorForSeq2Seq
-from transformers.trainer_utils import get_last_checkpoint, set_seed
-from transformers.models.t5.modeling_t5 import T5ForConditionalGeneration
-from transformers.models.t5.tokenization_t5_fast import T5TokenizerFast
-from transformers.tokenization_utils_fast import PreTrainedTokenizerFast
-from tokenizers import AddedToken
-from seq2seq.utils.args import ModelArguments
-from seq2seq.utils.picard_model_wrapper import PicardArguments, PicardLauncher, with_picard
-from seq2seq.utils.dataset import DataTrainingArguments, DataArguments
-from seq2seq.utils.dataset_loader import load_dataset
-from seq2seq.utils.spider import SpiderTrainer
-from seq2seq.utils.cosql import CoSQLTrainer
-
-import torch
-import traceback
-from seq2seq.eval_spider.format_predictions import format_predictions
-from seq2seq.utils.torch_module import DistributedDataParallel, Module
 
 # Necessary to prevent "HTTP Error 403: rate limit exceeded" with PyTorch 1.9.0
-torch.hub._validate_not_a_forked_repo=lambda a,b,c: True
+torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
+
 
 def main() -> None:
     # See all possible arguments by passing the --help flag to this script.
     parser = HfArgumentParser(
-        (PicardArguments, ModelArguments, DataArguments, DataTrainingArguments, Seq2SeqTrainingArguments)
+        (PicardArguments, ModelArguments, DataArguments,
+         DataTrainingArguments, Seq2SeqTrainingArguments)
     )
     picard_args: PicardArguments
     model_args: ModelArguments
@@ -59,7 +60,8 @@ def main() -> None:
     elif len(sys.argv) == 3 and sys.argv[1].startswith("--local_rank") and sys.argv[2].endswith(".json"):
         data = json.loads(Path(os.path.abspath(sys.argv[2])).read_text())
         data.update({"local_rank": int(sys.argv[1].split("=")[1])})
-        picard_args, model_args, data_args, data_training_args, training_args = parser.parse_dict(args=data)
+        picard_args, model_args, data_args, data_training_args, training_args = parser.parse_dict(
+            args=data)
     else:
         picard_args, model_args, data_args, data_training_args, training_args = parser.parse_args_into_dataclasses()
 
@@ -68,7 +70,8 @@ def main() -> None:
     if 'checkpoint-???' in model_args.model_name_or_path:
         model_args.model_name_or_path = get_last_checkpoint(
             os.path.dirname(model_args.model_name_or_path))
-        logger.info(f"Resolve model_name_or_path to {model_args.model_name_or_path}")
+        logger.info(
+            f"Resolve model_name_or_path to {model_args.model_name_or_path}")
 
     combined_args_dict = {
         **asdict(picard_args),
@@ -93,7 +96,8 @@ def main() -> None:
         wandb.config.update(combined_args_dict, allow_val_change=True)
 
     if not training_args.do_train and not training_args.do_eval and not training_args.do_predict:
-        logger.info("There is nothing to do. Please pass `do_train`, `do_eval` and/or `do_predict`.")
+        logger.info(
+            "There is nothing to do. Please pass `do_train`, `do_eval` and/or `do_predict`.")
         return
 
     # Detect last checkpoint
@@ -136,13 +140,14 @@ def main() -> None:
 
     # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
-        model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
+        model_args.tokenizer_name or model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
         use_fast=model_args.use_fast_tokenizer,
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
-    assert isinstance(tokenizer, PreTrainedTokenizerFast), "Only fast tokenizers are currently supported"
+    assert isinstance(
+        tokenizer, PreTrainedTokenizerFast), "Only fast tokenizers are currently supported"
     if isinstance(tokenizer, T5TokenizerFast):
         # In T5 `<` is OOV, see https://github.com/google-research/language/blob/master/language/nqg/tasks/spider/restore_oov.py
         tokenizer.add_tokens([AddedToken(" <="), AddedToken(" <")])
@@ -160,11 +165,11 @@ def main() -> None:
     with PicardLauncher() if picard_args.launch_picard and training_args.local_rank <= 0 else nullcontext(None):
         # Get Picard model class wrapper
         if picard_args.use_picard:
-            model_cls_wrapper = lambda model_cls: with_picard(
+            def model_cls_wrapper(model_cls): return with_picard(
                 model_cls=model_cls, picard_args=picard_args, tokenizer=tokenizer, schemas=dataset_splits.schemas
             )
         else:
-            model_cls_wrapper = lambda model_cls: model_cls
+            def model_cls_wrapper(model_cls): return model_cls
 
         # Initialize model from the given name or path
         model = model_cls_wrapper(AutoModelForSeq2SeqLM).from_pretrained(
@@ -206,13 +211,14 @@ def main() -> None:
             "data_collator": DataCollatorForSeq2Seq(
                 tokenizer,
                 model=model,
-                label_pad_token_id=(-100 if data_training_args.ignore_pad_token_for_loss else tokenizer.pad_token_id),
+                label_pad_token_id=(
+                    -100 if data_training_args.ignore_pad_token_for_loss else tokenizer.pad_token_id),
                 pad_to_multiple_of=8 if training_args.fp16 else None,
             ),
             "ignore_pad_token_for_loss": data_training_args.ignore_pad_token_for_loss,
             "target_with_db_id": data_training_args.target_with_db_id,
         }
-        #using spidertrainer as it is.
+        # using spidertrainer as it is.
         if data_args.dataset in ["cosql", "cosql+spider"]:
             trainer = CoSQLTrainer(**trainer_kwargs)
         else:
@@ -238,7 +244,8 @@ def main() -> None:
                 if data_training_args.max_train_samples is not None
                 else len(dataset_splits.train_split.dataset)
             )
-            metrics["train_samples"] = min(max_train_samples, len(dataset_splits.train_split.dataset))
+            metrics["train_samples"] = min(
+                max_train_samples, len(dataset_splits.train_split.dataset))
 
             trainer.log_metrics("train", metrics)
             trainer.save_metrics("train", metrics)
@@ -259,7 +266,8 @@ def main() -> None:
                 if data_training_args.max_val_samples is not None
                 else len(dataset_splits.eval_split.dataset)
             )
-            metrics["eval_samples"] = min(max_val_samples, len(dataset_splits.eval_split.dataset))
+            metrics["eval_samples"] = min(
+                max_val_samples, len(dataset_splits.eval_split.dataset))
 
             trainer.log_metrics("eval", metrics)
             trainer.save_metrics("eval", metrics)
@@ -267,8 +275,10 @@ def main() -> None:
             # Print full eval metrics for Spider
             try:
                 if isinstance(trainer, SpiderTrainer):
-                    format_predictions(f"{training_args.output_dir}/predictions_eval_None.json")
-                    os.system(f"cd seq2seq/eval_spider && python evaluation.py --gold /app/dataset_files/ori_dataset/{data_args.dataset}/{data_args.gold_json} --pred {training_args.output_dir}/predictions.sql --etype all --db /app/dataset_files/ori_dataset/{data_args.dataset}/database --table /app/dataset_files/ori_dataset/{data_args.dataset}/{data_args.tables_json} > {training_args.output_dir}/eval_breakdown.txt && cat {training_args.output_dir}/eval_breakdown.txt")
+                    format_predictions(
+                        f"{training_args.output_dir}/predictions_eval_None.json")
+                    os.system(
+                        f"python seq2seq/eval_spider/evaluation.py --gold /app/dataset_files/{data_args.dataset}/{data_training_args.gold_json} --pred {training_args.output_dir}/predictions.sql --etype all --db /app/dataset_files/{data_args.dataset}/database --table /app/dataset_files/{data_args.dataset}/{data_training_args.tables_json} > {training_args.output_dir}/eval_breakdown.txt && cat {training_args.output_dir}/eval_breakdown.txt")
             except Exception as e:
                 print(e)
                 print("The detailed evaluation threw an error, skipping.")

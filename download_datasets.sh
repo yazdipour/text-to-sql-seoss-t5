@@ -12,11 +12,11 @@ gdown 1XZHXCHiA3qYRsHjF68oo5gtzU_gbGMjo
 gdown 1WlxXLFWpDSrCvCAIXDABSHQxIxXUdlp-
 
 cd ..
-unzip dataset_files/spider.zip -d dataset_files/ori_dataset/
-unzip dataset_files/spider-dk.zip -d dataset_files/ori_dataset/
-mv dataset_files/ori_dataset/spider-dk dataset_files/ori_dataset/spider_dk
-unzip dataset_files/spider-syn.zip -d dataset_files/ori_dataset/
-mv dataset_files/ori_dataset/spider-syn dataset_files/ori_dataset/spider_syn
-unzip dataset_files/spider-realistic.zip -d dataset_files/ori_dataset/
-mv dataset_files/ori_dataset/spider-realistic dataset_files/ori_dataset/spider_realistic
+unzip dataset_files/spider.zip -d dataset_files/
+unzip dataset_files/spider-dk.zip -d dataset_files/
+mv dataset_files/spider-dk dataset_files/spider_dk
+unzip dataset_files/spider-syn.zip -d dataset_files/
+mv dataset_files/spider-syn dataset_files/spider_syn
+unzip dataset_files/spider-realistic.zip -d dataset_files/
+mv dataset_files/spider-realistic dataset_files/spider_realistic
 chmod -R 777 dataset_files/

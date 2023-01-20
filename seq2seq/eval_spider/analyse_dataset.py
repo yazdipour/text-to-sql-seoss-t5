@@ -30,7 +30,7 @@ def form_clause_str(sql_dict, delimiter='|'):
     Given a dictionary of SQL clauses, form a string encoding them
     """
     ##############################
-    # 
+    #
     # select: is distinct, aggregation
     # from
     # from: no. tables
@@ -42,7 +42,7 @@ def form_clause_str(sql_dict, delimiter='|'):
     # union
     # intersect
     # except
-    # 
+    #
     ##############################
     clause_str = ""
     no_clauses = 0
@@ -84,14 +84,14 @@ def form_clause_str(sql_dict, delimiter='|'):
                     clause_str += "SUBQUERY "
                     break
     clause_str += delimiter
-    
+
     # group by clause
     group_by = sql_dict.get('groupBy')
     if group_by:
         clause_str += "GROUP BY "
         no_clauses += 1
     clause_str += delimiter
-    
+
     # having clause
     having = sql_dict.get('having')
     if having:
@@ -113,35 +113,35 @@ def form_clause_str(sql_dict, delimiter='|'):
                     clause_str += "SUBQUERY "
                     break
     clause_str += delimiter
-    
+
     # order by clause
     order_by = sql_dict.get('orderBy')
     if order_by:
         clause_str += "ORDER BY " + order_by[0] + " "
         no_clauses += 1
     clause_str += delimiter
-    
+
     # limit clause
     limit = sql_dict.get('limit')
     if limit:
         clause_str += "LIMIT " + str(limit) + " "
         no_clauses += 1
     clause_str += delimiter
-    
+
     # union clause
     union = sql_dict.get('union')
     if union:
         clause_str += "UNION "
         no_clauses += 1
     clause_str += delimiter
-    
+
     # intersect clause
     intersect = sql_dict.get('intersect')
     if intersect:
         clause_str += "INTERSECT "
         no_clauses += 1
     clause_str += delimiter
-    
+
     # except clause
     if sql_dict.get('except'):
         clause_str += "EXCEPT "
@@ -161,7 +161,7 @@ def analyse_dataset(dataset_name):
     delimiter = '|'
     query_data = []
 
-    dataset_file = f"../../dataset_files/ori_dataset/{dataset_name}/"
+    dataset_file = f"../../dataset_files/{dataset_name}/"
     if dataset_name == "spider_dk":
         dataset_file += "spider-DK.json"
     else:
@@ -195,6 +195,7 @@ def analyse_dataset(dataset_name):
 
     print(f"Wrote result to {out_filename}")
     print('Result can be pasted into Google Sheets with Ctrl-V --> click Paste Options at bottom-right --> Split text to columns --> Change separator --> Custom --> Type "|" --> Enter')
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

@@ -6,6 +6,6 @@ fi
 
 python format_predictions.py ../../experiment/$1/predictions_eval_None.json
 
-python evaluation.py --gold ../../dataset_files/ori_dataset/$2/dev_gold.sql --pred ../../experiment/$1/predictions.sql --etype all --db ../../dataset_files/ori_dataset/$2/database --table ../../dataset_files/ori_dataset/$2/tables.json > ../../experiment/$1/eval_breakdown.txt
+python evaluation.py --gold ../../dataset_files/$2/dev_gold.sql --pred ../../experiment/$1/predictions.sql --etype all --db ../../dataset_files/$2/database --table ../../dataset_files/$2/tables.json > ../../experiment/$1/eval_breakdown.txt
 
 cat ../../experiment/$1/eval_breakdown.txt
