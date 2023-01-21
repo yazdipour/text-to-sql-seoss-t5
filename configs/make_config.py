@@ -23,6 +23,7 @@ for mdl, nb, pmttc, mode in itertools.product(model_name_or_path, num_beams, pic
     config["run_name"] = f"eval-{mdl[1]}-{pmttc}token-{nb}beams"
     config["output_dir"] = f'/eval/{config["run_name"]}'
     config["picard_mode"] = mode
+    config["max_val_samples"] = 931
     with open(f'configs/seoss/{config["run_name"]}.json', "w") as outfile:
         json.dump(config, outfile)
     # subprocess.run(["python", "eval.py", f'{config["run_name"]}.json'])

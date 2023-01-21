@@ -22,8 +22,10 @@ _LICENSE = ""
 _URL = "https://drive.google.com/uc?export=download&id=1a4_QNUpbdAIVEFUOIVxu7DBZ1TizZ8Pw"  # Only PIG
 _URL = "https://drive.google.com/uc?export=download&id=178l736_pXD-oQRWLj9TqqBGYrWz4d4Lk"  # SPIDER + PIG
 
-_URL = "/app/dataset_files/seoss+spider.zip"
-
+_URL = "/app/dataset_files/seoss.zip"
+_DB_PATH = "/seoss/database"
+_TRAIN = "/seoss/train_onlypig.json"
+_VAL = "/seoss/dev.json"
 
 class seoss(datasets.GeneratorBasedBuilder):
     VERSION = datasets.Version("1.0.0")
@@ -38,7 +40,7 @@ class seoss(datasets.GeneratorBasedBuilder):
 
     def __init__(self, *args, writer_batch_size=None, **kwargs) -> None:
         super().__init__(*args, writer_batch_size=writer_batch_size, **kwargs)
-        self.schema_cache = dict()
+        self.schema_cache = {}
         self.include_train_others: bool = kwargs.pop(
             "include_train_others", False)
 
@@ -83,18 +85,15 @@ class seoss(datasets.GeneratorBasedBuilder):
             datasets.SplitGenerator(
                 name=datasets.Split.TRAIN,
                 gen_kwargs={
-                    "data_filepaths": [
-                        downloaded_filepath + "/seoss+spider/train_spider_plus_pig.json",
-                    ],
-
-                    "db_path": downloaded_filepath + "/seoss+spider/database",
+                    "data_filepaths": [downloaded_filepath + _TRAIN],
+                    "db_path": downloaded_filepath + _DB_PATH,
                 },
             ),
             datasets.SplitGenerator(
                 name=datasets.Split.VALIDATION,
                 gen_kwargs={
-                    "data_filepaths": [downloaded_filepath + "/seoss+spider/dev_spider_plus_pig_specific_and_not_specific.json"],
-                    "db_path": downloaded_filepath + "/seoss+spider/database",
+                    "data_filepaths": [downloaded_filepath + _VAL],
+                    "db_path": downloaded_filepath + _DB_PATH,
                 },
             ),
         ]
@@ -110,9 +109,9 @@ class seoss(datasets.GeneratorBasedBuilder):
                 for idx, sample in enumerate(spider):
                     db_id = sample["db_id"]
                     if db_id not in self.schema_cache:
-                        print(db_path + "/" + db_id + "/" + db_id + ".sqlite")
+                        print(f"{db_path}/{db_id}/{db_id}.sqlite")
                         self.schema_cache[db_id] = dump_db_json_schema(
-                            db_path + "/" + db_id + "/" + db_id + ".sqlite", db_id
+                            f"{db_path}/{db_id}/{db_id}.sqlite", db_id
                         )
                     schema = self.schema_cache[db_id]
                     yield idx, {

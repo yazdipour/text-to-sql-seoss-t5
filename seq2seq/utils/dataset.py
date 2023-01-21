@@ -14,12 +14,12 @@ class DataTrainingArguments:
     Arguments pertaining to what data we are going to input our model for training and eval.
     """
 
-    tables_json: Optional[str] = field(
+    tables_file: Optional[str] = field(
         default="tables.json",
         metadata={
             "help": "Tables.json name"},
     )
-    gold_json: Optional[str] = field(
+    gold_file: Optional[str] = field(
         default="gold.json",
         metadata={
             "help": "gold.json name"},
@@ -228,7 +228,7 @@ class DatasetSplits(object):
 
 
 def _get_schemas(examples: Dataset) -> Dict[str, dict]:
-    schemas: Dict[str, dict] = dict()
+    schemas: Dict[str, dict] = {}
     for ex in examples:
         if ex["db_id"] not in schemas:
             schemas[ex["db_id"]] = {
@@ -427,7 +427,7 @@ def serialize_schema(
                 question=question,
                 table_name=table_name,
                 column_name=column_name,
-                db_path=(db_path + "/" + db_id + "/" + db_id + ".sqlite"),
+                db_path=f"{db_path}/{db_id}/{db_id}.sqlite",
             )
             if matches:
                 column_str = column_str_with_values.format(
@@ -458,10 +458,10 @@ def serialize_schema(
             primary_key_table = primary_key_table.lower(
             ) if normalize_query else primary_key_table
 
-            column_str = column_str + ' foreign key ' + \
-                primary_key_table + ' '  # + '.' + primary_key_column +''
+            column_str = f'{column_str} foreign key {primary_key_table} '  # + '.' + primary_key_column +''
 
         return column_str
+
     tables = [
         table_str.format(
             table=table_name.lower() if normalize_query else table_name,
@@ -490,5 +490,5 @@ def serialize_schema(
         serialized_schema = table_sep.join(tables)
     if schema_serialization_with_db_description:
         serialized_schema += desc_sep + description
-    print('serializes: ' + serialized_schema)
+    print(f'serializes: {serialized_schema}')
     return serialized_schema

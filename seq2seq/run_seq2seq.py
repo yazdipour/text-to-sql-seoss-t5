@@ -277,8 +277,10 @@ def main() -> None:
                 if isinstance(trainer, SpiderTrainer):
                     format_predictions(
                         f"{training_args.output_dir}/predictions_eval_None.json")
-                    os.system(
-                        f"python seq2seq/eval_spider/evaluation.py --gold /app/dataset_files/{data_args.dataset}/{data_training_args.gold_json} --pred {training_args.output_dir}/predictions.sql --etype all --db /app/dataset_files/{data_args.dataset}/database --table /app/dataset_files/{data_args.dataset}/{data_training_args.tables_json} > {training_args.output_dir}/eval_breakdown.txt && cat {training_args.output_dir}/eval_breakdown.txt")
+                    # Compare pred.sql with gold.sql
+                    command = f"python seq2seq/eval_spider/evaluation.py --gold /app/dataset_files/{data_args.dataset}/{data_training_args.gold_file} --pred {training_args.output_dir}/predictions.sql --etype all --db /app/dataset_files/{data_args.dataset}/database --table /app/dataset_files/{data_args.dataset}/{data_training_args.tables_file} > {training_args.output_dir}/eval_breakdown.txt && cat {training_args.output_dir}/eval_breakdown.txt"
+                    print(command)
+                    os.system(command)
             except Exception as e:
                 print(e)
                 print("The detailed evaluation threw an error, skipping.")
