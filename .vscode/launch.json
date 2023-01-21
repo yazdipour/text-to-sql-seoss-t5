@@ -21,7 +21,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
-                "configs/eval-dev.json"
+                "configs/eval.json"
             ]
         }
     ]
