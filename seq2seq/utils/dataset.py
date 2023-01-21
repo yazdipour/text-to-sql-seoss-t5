@@ -164,14 +164,11 @@ class DataArguments:
     dataset_paths: Dict[str, str] = field(
         default_factory=lambda: {
             "spider": "./seq2seq/datasets/spider",
-            "spider_dk": "./seq2seq/datasets/spider_dk",
-            "spider_syn": "./seq2seq/datasets/spider_syn",
             "cosql": "./seq2seq/datasets/cosql",
             "seoss": "./seq2seq/datasets/seoss",
             "spider_realistic": "./seq2seq/datasets/spider_realistic",
             "spider_syn": "./seq2seq/datasets/spider_syn",
-            "spider_dk": "./seq2seq/datasets/spider_dk"
-
+            "spider_dk": "./seq2seq/datasets/spider_dk",
         },
         metadata={"help": "Paths of the dataset modules."},
     )
@@ -204,6 +201,7 @@ class DataArguments:
         default=None,
         metadata={"help": "Sections from the data config to use for testing"}
     )
+
 
 
 @dataclass
