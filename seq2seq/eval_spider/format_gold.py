@@ -12,10 +12,8 @@ def format_gold(json_filename):
 
     with open(json_filename, 'r') as input_file:
         all_instances = json.loads(input_file.read())
-        for p in all_instances:
-            gold_queries.append(f"{p['query']}\t{p['db_id']}")
-
-    out_filename = os.path.join(os.path.dirname(json_filename), "dev_gold.sql")
+        gold_queries.extend(f"{p['query']}\t{p['db_id']}" for p in all_instances)
+    out_filename = os.path.join(os.path.dirname(json_filename), "dev_pig_specific_and_not_specific.sql")
 
     with open(out_filename, 'w') as output_file:
         for q in gold_queries:
@@ -40,7 +38,7 @@ def format_sql_field(json_filename, db_dir):
 
 
 if __name__ == "__main__":
-    json_filename = "/app/dataset_files/seoss/train_onlypig.json"
+    json_filename = "/app/dataset_files/seoss/dev_pig_specific_and_not_specific.json"
     db_dir = "/app/dataset_files/seoss/database"
     format_sql_field(json_filename, db_dir)
     format_gold(json_filename)

@@ -107,15 +107,15 @@ class seoss(datasets.Metric):
         )
 
     def _compute(self, predictions, references):
-        if self.config_name == "exact_match" or self.config_name == "both":
+        if self.config_name in ["exact_match", "both"]:
             exact_match = compute_exact_match_metric(predictions, references)
         else:
-            exact_match = dict()
+            exact_match = {}
 
-        if self.config_name == "test_suite" or self.config_name == "both":
+        if self.config_name in ["test_suite", "both"]:
             test_suite = compute_test_suite_metric(
                 predictions, references, db_dir=self.test_suite_db_dir)
         else:
-            test_suite = dict()
+            test_suite = {}
 
         return {**exact_match, **test_suite}

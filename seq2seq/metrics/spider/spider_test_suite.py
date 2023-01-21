@@ -10,7 +10,7 @@ def compute_test_suite_metric(predictions, references, db_dir: Optional[str] = N
     if db_dir is None:
         references[0]["db_path"]
 
-    foreign_key_maps = dict()
+    foreign_key_maps = {}
     for reference in references:
         if reference["db_id"] not in foreign_key_maps:
             foreign_key_maps[reference["db_id"]] = test_suite_evaluation.build_foreign_key_map(
@@ -41,30 +41,29 @@ def compute_test_suite_metric(predictions, references, db_dir: Optional[str] = N
     )
     # Only used for Sparc/CoSQL
     turn_scores = {"exec": [], "exact": []}
-    f = open("/eval/results_sql.csv", 'a')
-    writer = csv.writer(f)
-    for prediction, reference in zip(predictions, references):
-        turn_idx = reference.get("turn_idx", 0)
-        # skip final utterance-query pairs
-        if turn_idx < 0:
-            continue
-        try:
-            _ = evaluator.evaluate_one(
-                reference["db_id"],
-                reference["query"],
-                prediction,
-                turn_scores,
-                idx=turn_idx,
-            )
-        except AssertionError as e:
-            logger.warning(f"unexpected evaluation error: {e.args[0]}")
-        print("ajuns aici")
-        if _["exec"] < 1:
-            writer.writerow([reference["question"],prediction, reference["label"], _["exec"]])
-        print(_["exec"])
-        print (reference["question"], prediction, reference["label"])
-    evaluator.finalize()
-    f.close()
+    with open("/eval/results_sql.csv", 'a') as f:
+        writer = csv.writer(f)
+        for prediction, reference in zip(predictions, references):
+            turn_idx = reference.get("turn_idx", 0)
+            # skip final utterance-query pairs
+            if turn_idx < 0:
+                continue
+            try:
+                _ = evaluator.evaluate_one(
+                    reference["db_id"],
+                    reference["query"],
+                    prediction,
+                    turn_scores,
+                    idx=turn_idx,
+                )
+            except AssertionError as e:
+                logger.warning(f"unexpected evaluation error: {e.args[0]}")
+            print("ajuns aici")
+            if _["exec"] < 1:
+                writer.writerow([reference["question"],prediction, reference["label"], _["exec"]])
+            print(_["exec"])
+            print (reference["question"], prediction, reference["label"])
+        evaluator.finalize()
     return {
         "exec": evaluator.scores["all"]["exec"],
     }
