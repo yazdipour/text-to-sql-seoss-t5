@@ -83,7 +83,7 @@ docker start `docker ps -q -l` && docker attach `docker ps -q -l`
 To upload a new trained model to HuggingFace, execute the following commands _before_ training (note that MODEL_NAME should be the same as the subdirectory of train specified in the output_dir argument in the training config):
 ```
 huggingface-cli login
-apt install git-lfs
+apt-get update ; apt install git-lfs
 cd train
 git lfs install
 huggingface-cli repo create [MODEL_NAME]
