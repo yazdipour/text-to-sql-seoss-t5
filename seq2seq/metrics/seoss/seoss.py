@@ -31,7 +31,7 @@ _CITATION = """\
 _URL = "https://drive.google.com/uc?export=download&id=1a4_QNUpbdAIVEFUOIVxu7DBZ1TizZ8Pw"  # Only PIG
 _URL = "https://drive.google.com/uc?export=download&id=178l736_pXD-oQRWLj9TqqBGYrWz4d4Lk"  # SPIDER + PIG
 
-_URL = "/app/dataset_files/seoss+spider.zip"
+_URL = "/app/dataset_files/seoss.zip"
 
 
 @datasets.utils.file_utils.add_start_docstrings(_DESCRIPTION, _KWARGS_DESCRIPTION)
