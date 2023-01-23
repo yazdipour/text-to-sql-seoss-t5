@@ -118,7 +118,7 @@ Pre-trained models are available on HuggingFace at https://huggingface.co/elena-
 
 To enable Foreign Keys Serialization, set "schema_serialization_with_foreign_keys" to true and add the corresponding model to the Huggingface fine-tuned model 'elena-soare/bat-fk-base'
 
-To run the Pre-trained E-commerce model, leave the baseline configurations and set the model name or path to the Huggingface checkpoint 'elena-soare/bat-pre-trained'
+To run the Pre-trained model, leave the baseline configurations and set the model name or path to the Huggingface checkpoint 'elena-soare/bat-pre-trained'
 
 To enable Schema Augumentation, set "schema_serialization_with_db_description" to true and the corresponding model to the Huggingface fine-tuned model 'elena-soare/docu-t5-large-SD'
 
@@ -144,25 +144,3 @@ You can start serving with:
 ```
 make serve
 ```
-
-### Pre-training Script
-Pre-training script is located in /picard/pre-training/script.ipynb. You need to set the file with crawled data (https://huggingface.co/datasets/elena-soare/crawled-ecommerce/blob/main/train.json) within the same directory to run the code.
-
-The files used to crawl e-commerce Common Crawl data are in /picard/pre-training/crawling_data/. To run it, you would need an AWS account, set up AWS Athena columnar index (https://skeptric.com/common-crawl-index-athena/ -> tutorial). And obtain a file with the Authentication Credentials.
-
-Build virtualenv and install requirements:
-```
-pip3 install -r requirements 
-```
-Paste `credentials.csv` into `complex_task_search` parent directory for AWS credentials (region should be `us-east-1` 
-to be co-located with common crawl data). Format:
-```
-Access key ID,Secret access key,staging path,region
-XXX,YYY,ZZZ,us-east-1
-```
-
-The function run_build_corpus() in common_crawl.py should connect to AWS Athena and crawl the data.
-To convert html pages to text and santize the crawled data, you can find the code in html_to_text.py.
-
-
-
