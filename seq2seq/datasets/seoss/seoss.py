@@ -1,5 +1,3 @@
-
-
 import json
 from typing import List, Generator, Any, Dict, Tuple
 from third_party.spider.preprocess.get_tables import dump_db_json_schema
@@ -25,7 +23,8 @@ _URL = "https://drive.google.com/uc?export=download&id=178l736_pXD-oQRWLj9TqqBGY
 _URL = "/app/dataset_files/seoss.zip"
 _DB_PATH = "/seoss/database"
 _TRAIN = "/seoss/train_onlypig.json"
-_VAL = "/seoss/dev.json"
+_VAL = "/seoss/gold_v1.json"
+
 
 class seoss(datasets.GeneratorBasedBuilder):
     VERSION = datasets.Version("1.0.0")
@@ -41,8 +40,6 @@ class seoss(datasets.GeneratorBasedBuilder):
     def __init__(self, *args, writer_batch_size=None, **kwargs) -> None:
         super().__init__(*args, writer_batch_size=writer_batch_size, **kwargs)
         self.schema_cache = {}
-        self.include_train_others: bool = kwargs.pop(
-            "include_train_others", False)
 
     def _info(self) -> datasets.DatasetInfo:
         features = datasets.Features(
@@ -110,9 +107,7 @@ class seoss(datasets.GeneratorBasedBuilder):
                     db_id = sample["db_id"]
                     if db_id not in self.schema_cache:
                         print(f"{db_path}/{db_id}/{db_id}.sqlite")
-                        self.schema_cache[db_id] = dump_db_json_schema(
-                            f"{db_path}/{db_id}/{db_id}.sqlite", db_id
-                        )
+                        self.schema_cache[db_id] = dump_db_json_schema(f"{db_path}/{db_id}/{db_id}.sqlite", db_id)
                     schema = self.schema_cache[db_id]
                     yield idx, {
                         "query": sample["query"],
@@ -128,8 +123,7 @@ class seoss(datasets.GeneratorBasedBuilder):
                         "db_column_types": schema["column_types"],
                         "db_primary_keys": [{"column_id": column_id} for column_id in schema["primary_keys"]],
                         "db_foreign_keys": [
-                            {"column_id": column_id,
-                                "other_column_id": other_column_id}
+                            {"column_id": column_id, "other_column_id": other_column_id}
                             for column_id, other_column_id in schema["foreign_keys"]
                         ],
                     }

@@ -72,7 +72,7 @@ eval:
 			--mount type=bind,source=$(BASE_DIR)/dataset_files,target=/app/dataset_files \
 			--mount type=bind,source=$(BASE_DIR)/.vscode,target=/app/.vscode \
 			$(IMAGE_NAME):$(IMAGE_TAG) \
-			# /bin/bash -c "python seq2seq/run_seq2seq.py configs/eval.json"
+			# /bin/bash -c "CUDA_VISIBLE_DEVICES="0" python seq2seq/run_seq2seq.py configs/eval.json"
 
 
 

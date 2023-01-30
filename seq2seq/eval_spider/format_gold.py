@@ -38,8 +38,8 @@ def format_sql_field(json_filename, db_dir):
 
 
 if __name__ == "__main__":
-    json_filename = "/app/dataset_files/seoss/dev_spider_plus_pig_specific_and_not_specific.json"
+    json_filename = "/app/dataset_files/seoss/gold_v1.json"
     db_dir = "/app/dataset_files/seoss/database"
-    gold_filename = "dev_spider_plus_pig_specific_and_not_specific.sql"
+    gold_filename = "gold_v1.sql"
     format_sql_field(json_filename, db_dir)
     format_gold(json_filename, gold_filename)
